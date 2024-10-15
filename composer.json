@@ -1,13 +1,13 @@
 {
-    "name": "fioru/lasntgadmin-plugin_template",
-    "version": "1.0.0",
+    "name": "fioru/lasntgadmin-enrolment-log",
+    "version": "0.0.1",
     "type": "wordpress-plugin",
     "extra": {
-        "installer-name": "lasntgadmin-plugin_template"
+        "installer-name": "lasntgadmin-enrolment-log"
     },
     "autoload": {
         "psr-4": {
-            "Lasntg\\Admin\\PluginTemplate\\": "lib"
+            "Lasntg\\Admin\\EnrolmentLog\\": "lib"
         }
     },
     "autoload-dev": {
@@ -30,6 +30,26 @@
         },
         {
             "type": "vcs",
+            "url":  "git@github.com:fioru-software/lasntgadmin-purchase-order-payment-gateway.git"
+        },
+        {
+            "type": "vcs",
+            "url":  "git@github.com:fioru-software/lasntgadmin-dashboard.git"
+        },
+        {
+            "type": "vcs",
+            "url":  "git@github.com:fioru-software/lasntgadmin-theme.git"
+        },
+        {
+            "type": "vcs",
+            "url":  "git@github.com:fioru-software/lasntgadmin-translate.git"
+        },
+        {
+            "type": "vcs",
+            "url":  "git@github.com:fioru-software/lasntgadmin-subscriptions.git"
+        },
+        {
+            "type": "vcs",
             "url":  "git@github.com:fioru-software/lasntgadmin-groups.git"
         },
         {
@@ -42,10 +62,6 @@
         },
         {
             "type": "vcs",
-            "url":  "git@github.com:fioru-software/lasntgadmin-subscriptions.git"
-        },
-        {
-            "type": "vcs",
             "url":  "git@github.com:fioru-software/lasntgadmin-users.git"
         },
         {
@@ -55,14 +71,14 @@
     ],
     "require": {
         "composer/installers": "~2.0",
-        "fioru/lasntgadmin-grant-funded-payment-gateway": "^1.0.7",
-        "fioru/lasntgadmin-attendees": "^3.1.0",
-        "fioru/lasntgadmin-products": "^5.4.2",
-        "fioru/lasntgadmin-groups": "^1.1",
-        "fioru/lasntgadmin-subscriptions": "^2.1.2",
-        "fioru/lasntgadmin-users": "^3.2.0"
+        "fioru/lasntgadmin-grant-funded-payment-gateway": "^1.10.8",
+        "fioru/lasntgadmin-attendees": "^3.8.22",
+        "fioru/lasntgadmin-products": "^5.14.20",
+        "fioru/lasntgadmin-groups": "^1.6.2",
+        "fioru/lasntgadmin-users": "^3.4.1",
+        "fioru/lasntgadmin-orders": "^1.9.0"
     },
-    "require-dev": {
+	"require-dev": {
         "fakerphp/faker": "^1.19",
         "overtrue/phplint": "^3.0",
         "yoast/phpunit-polyfills": "^1.0",
@@ -72,7 +88,7 @@
         "dealerdirect/phpcodesniffer-composer-installer": "^0.7",
         "phpcompatibility/php-compatibility": "^9.3",
         "wp-coding-standards/wpcs": "dev-develop",
-		"enlightn/security-checker": "^1.11.0"
+        "enlightn/security-checker": "^1.11.0"
     },
     "minimum-stability": "dev",
     "config": {

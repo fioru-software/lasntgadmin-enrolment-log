@@ -1,8 +1,8 @@
 <?php
 
-namespace Lasntg\Admin\PluginTemplate;
+namespace Lasntg\Admin\EnrolmentLog;
 
-use Lasntg\Admin\PluginTemplate\{ Capabilities };
+use Lasntg\Admin\EnrolmentLog\{ CustomDbTable, Capabilities };
 
 /**
  * Plugin utilities
@@ -11,6 +11,7 @@ class PluginUtils {
 
 	public static function activate() {
 		Capabilities::add();
+		CustomDbTable::install();
 	}
 
 	public static function deactivate() {
@@ -18,11 +19,11 @@ class PluginUtils {
 	}
 
 	public static function get_camel_case_name(): string {
-		return 'lasntgadmin_plugin_template';
+		return 'lasntgadmin_enrolment_log';
 	}
 
 	public static function get_kebab_case_name(): string {
-		return 'lasntgadmin-plugin-template';
+		return 'lasntgadmin-enrolment-log';
 	}
 
 	public static function get_absolute_plugin_path(): string {

@@ -24,7 +24,7 @@ pipeline {
     }
 
     environment {
-        PROJECT_NAME = "lasntgadmin-plugin_template"
+        PROJECT_NAME = "lasntgadmin-enrolment-log"
         REPO_NAME = "fioru-software/$PROJECT_NAME"
         GITHUB_API_URL = "https://api.github.com/repos/$REPO_NAME"
         GITHUB_TOKEN = credentials('jenkins-github-personal-access-token')
@@ -36,10 +36,11 @@ pipeline {
         SITE_TITLE = 'WordPress'
         WP_PLUGINS = 'woocommerce'
         WP_THEME = 'storefront'
-        WP_PLUGIN = "example-plugin"
+        WP_PLUGIN = "lasntgadmin-enrolment-log"
         ADMIN_USERNAME = 'admin'
         ADMIN_PASSWORD = 'secret'
         ADMIN_EMAIL = 'wordpress@example.com'
+        COMPOSER_AUTOLOAD_FILEPATH = '/usr/local/src/vendor/autoload.php'
     }
 
     stages {
@@ -53,7 +54,7 @@ pipeline {
                         sh "touch .env"
                         sh "docker-compose build --build-arg USER_ID=$USER_ID --build-arg GITHUB_TOKEN=$GITHUB_TOKEN --pull --no-cache wordpress"
                         sh "docker-compose up -d db"
-                        sh "docker run --rm -d -e DB_HOST=$DB_HOST -e SITE_URL=$SITE_URL -e SITE_TITLE=$SITE_TITLE -e WP_PLUGINS='$WP_PLUGINS' -e WP_THEME=$WP_THEME -e WP_PLUGIN=$WP_PLUGIN -e ADMIN_USERNAME=$ADMIN_USERNAME -e ADMIN_PASSWORD=$ADMIN_PASSWORD -e ADMIN_EMAIL=$ADMIN_EMAIL --name $CONTAINER_NAME --network ${PROJECT_NAME}_default ${PROJECT_NAME}_wordpress sleep infinity" 
+                        sh "docker run --rm -d -e COMPOSER_AUTOLOAD_FILEPATH=$COMPOSER_AUTOLOAD_FILEPATH -e DB_HOST=$DB_HOST -e SITE_URL=$SITE_URL -e SITE_TITLE=$SITE_TITLE -e WP_PLUGINS='$WP_PLUGINS' -e WP_THEME=$WP_THEME -e WP_PLUGIN=$WP_PLUGIN -e ADMIN_USERNAME=$ADMIN_USERNAME -e ADMIN_PASSWORD=$ADMIN_PASSWORD -e ADMIN_EMAIL=$ADMIN_EMAIL --name $CONTAINER_NAME --network ${PROJECT_NAME}_default ${PROJECT_NAME}_wordpress sleep infinity" 
                         sh "docker cp . $CONTAINER_NAME:/usr/local/src/"
                         sh "docker exec -t $CONTAINER_NAME /usr/local/src/scripts/install.sh"
                         sh "docker exec -t $CONTAINER_NAME /usr/local/src/scripts/plugins.sh"

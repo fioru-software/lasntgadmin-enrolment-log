@@ -11,27 +11,19 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "POT-Creation-Date: 2023-04-28T12:26:38+00:00\n"
-"PO-Revision-Date: 2023-04-28 14:18+0100\n"
+"PO-Revision-Date: 2024-10-15 11:17+0100\n"
 "X-Generator: WP-CLI 2.7.1\n"
 "X-Domain: lasntgadmin\n"
 
 #. Plugin Name of the plugin
-msgid "LASNTG Admin Plugin Template"
+msgid "LASNTG Enrolment Log"
 msgstr ""
 
 #. Plugin URI of the plugin
-msgid "https://github.com/fioru-software/lasntgadmin-plugin_template"
+msgid "https://github.com/fioru-software/lasntgadmin-enrolment-log"
 msgstr ""
 
 #. Description of the plugin
-msgid "An example plugin."
+msgid "Logs enrolments and cancellations"
 msgstr ""
 
-msgid "Featured"
-msgstr "Starred"
-
-msgid "Products"
-msgstr "Produkte"
-
-msgid "Full Name"
-msgstr "Vol Naam"

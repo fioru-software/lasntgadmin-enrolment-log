@@ -1,6 +1,6 @@
 <?php
 
-namespace Lasntg\Admin;
+namespace Lasntg\Admin\EnrolmentLog;
 
 class Translate {
 
