@@ -1,0 +1,31 @@
+
+wp-content/
+node_modules/
+/dist
+
+# Directories/files that may appear in your environment
+.DS_Store
+Thumbs.db
+wp-cli.local.yml
+*.sql
+*.swp
+*.tar.gz
+*.tgz
+#*.zip
+.idea
+.vscode/*
+!.vscode/tasks.json
+!.vscode/settings.json
+
+# Composer
+vendor/
+
+# wp-env config
+.wp-env.override.json
+
+# Typescript
+*.tsbuildinfo
+
+.env
+.phplint-cache
+.phpunit.result.cache
