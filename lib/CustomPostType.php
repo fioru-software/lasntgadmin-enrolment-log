@@ -9,7 +9,11 @@ class CustomPostType {
 	}
 
 	public static function add_actions() {
-		add_action('init', [ self::class, 'register_custom_post_type' ]);
+		add_action( 'init', [ self::class, 'register_custom_post_type' ]);
+	}
+
+	public static function get_name(): string {
+		return 'enrolment_log';
 	}
 
 	private static function get_labels(): array {
@@ -43,7 +47,7 @@ class CustomPostType {
 
 	public static function register_custom_post_type() {
 		$post_type = register_post_type(
-			'enrolment_log',
+			self::get_name(),
 			[
 				'labels' => self::get_labels(),
 				'public' => true,
@@ -51,4 +55,5 @@ class CustomPostType {
 			]
 		);
 	}
+
 }

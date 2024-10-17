@@ -6,19 +6,25 @@ class CustomDbTable {
 
 	static $db_version = '0.1';
 
-	public static function install() {
+	public static function get_table_name(): string {
+		global $wpdb;
+		$table_name = $wpdb->prefix . 'enrolment_log';
+		return $table_name;
+	}
+
+	public static function install(): void {
 		global $wpdb;
 
-		$table_name = $wpdb->prefix . 'enrolment_log';
+		$table_name = self::get_table_name();
 		$charset_collate = $wpdb->get_charset_collate();
 
 		$sql = "CREATE TABLE $table_name (
-			post_id bigint(20) unsigned NOT NULL,
-			course_id bigint(20) unsigned NOT NULL,
-			order_id bigint(20) unsigned NOT NULL,
-			attendee_id bigint(20) unsigned NOT NULL,
+			post_id bigint(20) unsigned NOT NULL COMMENT 'post_type=enrolment_log',
+			course_id bigint(20) unsigned NOT NULL COMMENT 'post_type=product',
+			order_id bigint(20) unsigned NOT NULL COMMENT 'post_type=shop_order',
+			attendee_id bigint(20) unsigned NOT NULL COMMENT 'post_type=attendee',
 			comment varchar(200) DEFAULT '' NOT NULL,
-			KEY post_id (post_id),
+			KEY enrolment_id (post_id),
 			KEY course_id (course_id),
 			KEY order_id (order_id),
 			KEY attendee_id (attendee_id),
