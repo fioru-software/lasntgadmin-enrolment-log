@@ -51,6 +51,7 @@ class CustomPostType {
 			[
 				'labels' => self::get_labels(),
 				'public' => true,
+				'show_in_rest' => true,
 				'supports' => [ 'author' ],
 			]
 		);
