@@ -15,13 +15,13 @@ class RestApi {
 	public static function register_rest_routes() {
 		register_rest_route(
 			self::PATH_PREFIX,
-			'/test',
+			'/',
 			[
 				'methods'             => 'GET',
 				'callback'            => [ self::class, 'get_entries' ],
-				'permission_callback' => '__return_true'
+				'permission_callback' => [ self::class, 'auth_nonce' ]
 			]
-		);                                                                                                                                            
+		);
 		register_rest_route(
 			self::PATH_PREFIX,
 			'/',
@@ -31,7 +31,17 @@ class RestApi {
 				'permission_callback' => [ self::class, 'auth_nonce' ],
 				'allow_batch'         => [ 'v1' => true ],
 			]
-		);                                                                                                                                            
+		);
+		register_rest_route(
+			self::PATH_PREFIX,
+			'/',
+			[
+				'methods' => 'PUT',
+				'callback' => [ self::class, 'update_entry' ],
+				'permission_callback' => [ self::class, 'auth_nonce' ],
+				'allow_batch'         => [ 'v1' => true ],
+			]
+		);
 
 	}
 
@@ -53,18 +63,37 @@ class RestApi {
 	}
 
 	public static function add_entry( WP_REST_Request $req ) {
-		error_log(print_r($req->get_params(), true));
 
 		$entry = new LogEntry();
 		$entry->course_id = $req->get_param('product_id');
 		$entry->order_id = $req->get_param('order_id');
 		$entry->attendee_id = $req->get_param('attendee_id');
-		$entry->comment = $req->get_param('comment');
 		$entry->status = $req->get_param('status');
 		$entry->comment = $req->get_param('comment');
 
 		try {
-			DbApi::insert_entry( $entry );
+			return DbApi::insert_entry( $entry );
+
+		} catch( Exception $e )  {
+
+			return new WP_Error(
+				$e->get_code(),
+				$e->get_message(),
+				$entry
+			);
+		}
+	}
+
+	/**
+	 * Only status and comment can be updated.
+	 */
+	public static function update_entry( WP_REST_Request $req ) {
+		$post_id = $req->get_param( 'post_id' );
+		$entry = DbApi::get_entry( $post_id );
+		$entry->status = $req->get_param('status'); 
+		$entry->comment = $req->get_param('comment');
+		try {
+			return DbApi::update_entry( $entry );
 
 		} catch( Exception $e )  {
 

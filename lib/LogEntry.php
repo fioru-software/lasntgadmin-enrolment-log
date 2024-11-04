@@ -2,13 +2,16 @@
 
 namespace Lasntg\Admin\EnrolmentLog;
 
+use DateTimeImmutable;
+
 class LogEntry {
 
 	// wp_posts
 	public int $post_id;
 	public int $author_id;
 	public string $status;
-	public string $datetime;
+	public DateTimeImmutable $created;
+	public DateTimeImmutable $modified;
 
 	// wp_enrolment_log
 	public int $course_id;

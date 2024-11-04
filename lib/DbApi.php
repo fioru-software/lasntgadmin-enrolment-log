@@ -12,6 +12,44 @@ use Exception;
  */
 class DbApi {
 
+	public static function search_entry( LogEntry $entry ): LogEntry {
+
+		global $wpdb;
+		$table_name = CustomDbTable::get_table_name();
+
+		if( ! isset( $entry->attendee_id) ) {
+			throw new Exception(
+				'Missing required attendee id'
+			);
+		}
+		if( ! isset( $entry->course_id) ) {
+			throw new Exception(
+				'Missing required course id'
+			);
+		}
+		if( ! isset( $entry->order_id) ) {
+			throw new Exception(
+				'Missing required order id'
+			);
+		}
+
+		$post_id = $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT post_id FROM $table_name WHERE attendee_id = %d AND course_id = %d AND order_id = %d",
+				$entry->attendee_id, $entry->course_id, $entry->order_id
+			)
+		);
+
+		if( is_null( $post_id ) ) {
+			$error_msg = $wpdb->last_error;
+			error_log( $error_msg );
+			throw new Exception(
+				$error_msg
+			);
+		}
+		return self::get_entry( $post_id );
+	}
+
 	/**
 	 * @throws Exception
 	 */
@@ -45,9 +83,10 @@ class DbApi {
 
 		$log_entry = new LogEntry();
 		$log_entry->post_id = $post_id;
-		$log_entry->author_id = $post->get( 'post_author' );
-		$log_entry->datetime = $post->get( 'post_date' );
-		$log_entry->status = $post->get( 'post_status' );
+		$log_entry->author_id = $post->post_author;
+		$log_entry->created = get_post_datetime( $post_id, 'date', 'local' ); 
+		$log_entry->modified = get_post_datetime( $post_id, 'modified', 'local');
+		$log_entry->status = $post->post_status;
 		$log_entry->course_id = $row->course_id;
 		$log_entry->order_id = $row->order_id;
 		$log_entry->attendee_id = $row->attendee_id;
@@ -108,14 +147,13 @@ class DbApi {
 	}
 
 	/**
-	 * @return int The number of entries added.
 	 * @throws Exception
 	 */
-	public static function insert_entry( LogEntry $entry ): int {
+	public static function insert_entry( LogEntry $entry ): LogEntry {
 
 		global $wpdb;
 
-		$post_id = wp_insert_post( 
+		$post_id = wp_insert_post(
 			[
 				'post_type' => CustomPostType::get_name(),
 				'post_status' => $entry->status
@@ -151,7 +189,9 @@ class DbApi {
 				$error_msg
 			);
 		}
-		return (int)$count;
+
+		$entry->post_id = $post_id;
+		return $entry;
 
 	}
 
@@ -160,21 +200,21 @@ class DbApi {
 	 * @return int The number of entries added.
 	 * @throws Exception
 	 */
-	public static function insert_entries( array $entries ): int {
+	public static function insert_entries( array $log_entries ): array {
+
 		global $wpdb;
+		$db_entries = [];
 
 		$wpdb->query('START TRANSACTION');
 
 		try {
 
-			$count = 0;
-
-			foreach( $entries as $entry ) {
-				$count += self::add_entry( $entry );
+			foreach( $log_entries as $log_entry ) {
+				array_push( $db_entries, self::add_entry( $log_entry ) );
 			}
 
 			$wpdb->query('COMMIT');
-			return $count;
+			return $db_entries;
 
 		} catch( Exception $e ) {
 
