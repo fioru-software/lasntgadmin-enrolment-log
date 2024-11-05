@@ -2,7 +2,7 @@
 
 namespace Lasntg\Admin\EnrolmentLog;
 
-use Lasntg\Admin\EnrolmentLog\{ LogEntry, CustomPostType, CustomDbTable };
+use Lasntg\Admin\EnrolmentLog\{ LogEntry, CustomPostType, CustomDbTable, NotFoundException };
 
 use WP_Error;
 use Exception;
@@ -11,6 +11,9 @@ use Exception;
  * @see https://developer.wordpress.org/reference/classes/wpdb/
  */
 class DbApi {
+
+	const ACTIVE_ENROLMENT_STATUS = 'publish';
+	const CANCELED_ENROLMENT_STATUS = 'cancelled';
 
 	public static function search_entry( LogEntry $entry ): LogEntry {
 
@@ -32,22 +35,41 @@ class DbApi {
 				'Missing required order id'
 			);
 		}
-
-		$post_id = $wpdb->get_var(
-			$wpdb->prepare(
-				"SELECT post_id FROM $table_name WHERE attendee_id = %d AND course_id = %d AND order_id = %d",
-				$entry->attendee_id, $entry->course_id, $entry->order_id
-			)
-		);
-
-		if( is_null( $post_id ) ) {
-			$error_msg = $wpdb->last_error;
-			error_log( $error_msg );
+		if( ! isset( $entry->status ) ) {
 			throw new Exception(
-				$error_msg
+				'Missing required post status'
 			);
 		}
-		return self::get_entry( $post_id );
+
+		$prepared = $wpdb->prepare(
+			"SELECT * FROM $table_name JOIN wp_posts ON $table_name.post_id = wp_posts.ID WHERE wp_posts.post_status = '%s' AND $table_name.course_id = %d AND $table_name.attendee_id = %d AND $table_name.order_id = %d",
+			$entry->status,
+			$entry->course_id,
+			$entry->attendee_id,
+			$entry->order_id
+		);
+		error_log("=== row ===");
+		error_log($prepared);
+
+		$row = $wpdb->get_row( $prepared );
+
+		if( is_null( $row ) ) {
+			throw new NotFoundException("Enrolment log entry not found");
+		}
+
+		$log_entry = new LogEntry();
+		$log_entry->post_id = $row->ID;
+		$log_entry->author_id = $row->post_author;
+		$log_entry->created = get_post_datetime( $row->ID, 'date', 'local' ); 
+		$log_entry->modified = get_post_datetime( $row->ID, 'modified', 'local');
+		$log_entry->status = $row->post_status;
+		$log_entry->course_id = $row->course_id;
+		$log_entry->order_id = $row->order_id;
+		$log_entry->attendee_id = $row->attendee_id;
+		$log_entry->comment = $row->comment;
+
+		return $log_entry;
+
 	}
 
 	/**
@@ -102,6 +124,8 @@ class DbApi {
 	 */
 	public static function update_entry( LogEntry $entry ): int {
 
+		global $wpdb;
+
 		$post_id = wp_update_post(
 			(object)[
 				'ID' => $entry->post_id,
@@ -146,6 +170,7 @@ class DbApi {
 		return (int)$count;
 	}
 
+
 	/**
 	 * @throws Exception
 	 */
@@ -153,79 +178,53 @@ class DbApi {
 
 		global $wpdb;
 
-		$post_id = wp_insert_post(
-			[
-				'post_type' => CustomPostType::get_name(),
-				'post_status' => $entry->status
-			],
-			true
-		);
-
-		if( is_wp_error( $post_id ) ) {
-			$wp_error = $post_id;
-			error_log( $wp_error->get_error_message() );
-			throw new Exception(
-				$wp_error->get_error_message(),
-				$wp_error->get_error_code()
-			);
-		}
-
-		$count = $wpdb->insert(
-			CustomDbTable::get_table_name(),
-			[
-				'post_id' => $post_id,
-				'course_id' => $entry->course_id,
-				'order_id' => $entry->order_id,
-				'attendee_id' => $entry->attendee_id,
-				'comment' => $entry->comment
-			],
-			[ '%d', '%d', '%d', '%d', '%s' ]
-		);
-
-		if( $count === false ) {
-			$error_msg = $wpdb->last_error;
-			error_log( $error_msg );
-			throw new Exception(
-				$error_msg
-			);
-		}
-
-		$entry->post_id = $post_id;
-		return $entry;
-
-	}
-
-	/**
-	 * @param LogEntry[] $entries
-	 * @return int The number of entries added.
-	 * @throws Exception
-	 */
-	public static function insert_entries( array $log_entries ): array {
-
-		global $wpdb;
-		$db_entries = [];
-
-		$wpdb->query('START TRANSACTION');
-
 		try {
+			self::search_entry( $entry );
+			throw new Exception("Existing active enrolment");
+		} catch( NotFoundException $e ) {
 
-			foreach( $log_entries as $log_entry ) {
-				array_push( $db_entries, self::add_entry( $log_entry ) );
+			$post_id = wp_insert_post(
+				[
+					'post_type' => CustomPostType::get_name(),
+					'post_status' => $entry->status
+				],
+				true
+			);
+
+			if( is_wp_error( $post_id ) ) {
+				$wp_error = $post_id;
+				error_log( $wp_error->get_error_message() );
+				throw new Exception(
+					$wp_error->get_error_message(),
+					$wp_error->get_error_code()
+				);
 			}
 
-			$wpdb->query('COMMIT');
-			return $db_entries;
-
-		} catch( Exception $e ) {
-
-			$wpdb->query('ROLLBACK');
-			throw new Exception(
-				$e->get_message(),
-				$e->get_code(),
-				$e
+			$count = $wpdb->insert(
+				CustomDbTable::get_table_name(),
+				[
+					'post_id' => $post_id,
+					'course_id' => $entry->course_id,
+					'order_id' => $entry->order_id,
+					'attendee_id' => $entry->attendee_id,
+					'comment' => $entry->comment
+				],
+				[ '%d', '%d', '%d', '%d', '%s' ]
 			);
 
+			if( $count === false ) {
+				$error_msg = $wpdb->last_error;
+				error_log( $error_msg );
+				throw new Exception(
+					$error_msg
+				);
+			}
+
+			$entry->post_id = $post_id;
+			return $entry;
 		}
+
+
 	}
 
 }

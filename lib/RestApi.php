@@ -2,7 +2,7 @@
 
 namespace Lasntg\Admin\EnrolmentLog;
 
-use WP_REST_Request, WP_Error;
+use WP_REST_Request, WP_Error, Exception;
 
 class RestApi {
 
@@ -15,7 +15,7 @@ class RestApi {
 	public static function register_rest_routes() {
 		register_rest_route(
 			self::PATH_PREFIX,
-			'/',
+			'/get-entries',
 			[
 				'methods'             => 'GET',
 				'callback'            => [ self::class, 'get_entries' ],
@@ -24,7 +24,7 @@ class RestApi {
 		);
 		register_rest_route(
 			self::PATH_PREFIX,
-			'/',
+			'/add-entry',
 			[
 				'methods'             => 'POST',
 				'callback'            => [ self::class, 'add_entry' ],
@@ -34,12 +34,12 @@ class RestApi {
 		);
 		register_rest_route(
 			self::PATH_PREFIX,
-			'/',
+			'/update-entry',
 			[
-				'methods' => 'PUT',
+				'methods' => ['PUT', 'POST'],
 				'callback' => [ self::class, 'update_entry' ],
 				'permission_callback' => [ self::class, 'auth_nonce' ],
-				'allow_batch'         => [ 'v1' => true ],
+				'allow_batch'         => [ 'v1' => false ],
 			]
 		);
 
@@ -77,8 +77,8 @@ class RestApi {
 		} catch( Exception $e )  {
 
 			return new WP_Error(
-				$e->get_code(),
-				$e->get_message(),
+				$e->getCode(),
+				$e->getMessage(),
 				$entry
 			);
 		}
@@ -98,8 +98,8 @@ class RestApi {
 		} catch( Exception $e )  {
 
 			return new WP_Error(
-				$e->get_code(),
-				$e->get_message(),
+				$e->getCode(),
+				$e->getMessage(),
 				$entry
 			);
 		}

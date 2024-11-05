@@ -9,7 +9,7 @@ class LogEntry {
 	// wp_posts
 	public int $post_id;
 	public int $author_id;
-	public string $status;
+	public string $status; // publish, cancelled
 	public DateTimeImmutable $created;
 	public DateTimeImmutable $modified;
 
