@@ -6,22 +6,30 @@ use DateTimeImmutable;
 
 class LogEntry {
 
-	// wp_posts
+	/**
+	 * From the wp_posts table.
+	 */
 	public int $post_id;
 	public int $author_id;
-	public string $status; // publish, cancelled
+	public string $status; // Either publish or cancelled status.
 	public DateTimeImmutable $created;
 	public DateTimeImmutable $modified;
 
-	// wp_enrolment_log
+	/**
+	 * From the wp_enrolment_log table.
+	 */
 	public int $course_id;
 	public int $order_id;
 	public int $attendee_id;
 	public string $comment;
 
-	public function toArray(): array {
+	/**
+	 * From wp_postmeta table.
+	 */
+	public int $group_id;
+
+	public function to_array(): array {
 		$data = get_object_vars( $this );
 		return $data;
 	}
-
 }

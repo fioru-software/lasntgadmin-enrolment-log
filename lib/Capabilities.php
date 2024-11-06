@@ -12,7 +12,7 @@ class Capabilities {
 	 */
 	public static function get_administrator_capabilities(): array {
 		return [
-			'view_enrolment_log'
+			'view_enrolment_log',
 		];
 	}
 
@@ -21,7 +21,7 @@ class Capabilities {
 	 */
 	public static function get_national_manager_capabilities(): array {
 		return [
-			'view_enrolment_log'
+			'view_enrolment_log',
 		];
 	}
 
@@ -30,7 +30,7 @@ class Capabilities {
 	 */
 	public static function get_regional_training_centre_manager_capabilities(): array {
 		return [
-			'view_enrolment_log'
+			'view_enrolment_log',
 		];
 	}
 
@@ -39,7 +39,7 @@ class Capabilities {
 	 */
 	public static function get_training_officer_capabilities(): array {
 		return [
-			'view_enrolment_log'
+			'view_enrolment_log',
 		];
 	}
 
@@ -48,7 +48,7 @@ class Capabilities {
 	 */
 	public static function get_fire_training_officer_capabilities(): array {
 		return [
-			'view_enrolment_log'
+			'view_enrolment_log',
 		];
 	}
 

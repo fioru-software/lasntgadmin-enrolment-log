@@ -18,6 +18,22 @@ class PluginUtils {
 		Capabilities::remove();
 	}
 
+	private static function get_data(): array {
+		return get_plugin_data(
+			sprintf(
+				'%s/wp-content/plugins/%s/%s.php',
+				rtrim( ABSPATH, '/' ),
+				self::get_kebab_case_name(),
+				self::get_kebab_case_name()
+			)
+		);
+	}
+
+	public static function get_version(): string {
+		$data = self::get_data();
+		return $data['Version'];
+	}
+
 	public static function get_camel_case_name(): string {
 		return 'lasntgadmin_enrolment_log';
 	}

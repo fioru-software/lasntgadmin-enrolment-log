@@ -4,7 +4,7 @@ namespace Lasntg\Admin\EnrolmentLog;
 
 class CustomDbTable {
 
-	static $db_version = '0.1';
+	public static $db_version = '0.1';
 
 	public static function get_table_name(): string {
 		global $wpdb;
@@ -15,7 +15,7 @@ class CustomDbTable {
 	public static function install(): void {
 		global $wpdb;
 
-		$table_name = self::get_table_name();
+		$table_name      = self::get_table_name();
 		$charset_collate = $wpdb->get_charset_collate();
 
 		$sql = "CREATE TABLE $table_name (
@@ -35,8 +35,6 @@ class CustomDbTable {
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql );
 
-		add_option( sprintf('%s_enrolments_db_version', PluginUtils::get_camel_case_name() ), self::$db_version );
+		add_option( sprintf( '%s_enrolments_db_version', PluginUtils::get_camel_case_name() ), self::$db_version );
 	}
-
 }
-

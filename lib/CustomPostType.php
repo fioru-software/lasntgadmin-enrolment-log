@@ -9,7 +9,7 @@ class CustomPostType {
 	}
 
 	public static function add_actions() {
-		add_action( 'init', [ self::class, 'register_custom_post_type' ]);
+		add_action( 'init', [ self::class, 'register_custom_post_type' ] );
 	}
 
 	public static function get_name(): string {
@@ -41,7 +41,7 @@ class CustomPostType {
 			'uploaded_to_this_item' => __( 'Uploaded to this enrolment log', 'lasntgadmin' ),
 			'items_list'            => __( 'Enrolment Logs List', 'lasntgadmin' ),
 			'items_list_navigation' => __( 'Enrolment Logs List navigation', 'lasntgadmin' ),
-			'filter_items_list'     => __( 'Filter Enrolment Logs', 'lasntgadmin' )
+			'filter_items_list'     => __( 'Filter Enrolment Logs', 'lasntgadmin' ),
 		];
 	}
 
@@ -49,12 +49,11 @@ class CustomPostType {
 		$post_type = register_post_type(
 			self::get_name(),
 			[
-				'labels' => self::get_labels(),
-				'public' => true,
+				'labels'       => self::get_labels(),
+				'public'       => true,
 				'show_in_rest' => true,
-				'supports' => [ 'author' ],
+				'supports'     => [ 'author' ],
 			]
 		);
 	}
-
 }

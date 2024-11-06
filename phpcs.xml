@@ -49,6 +49,9 @@
         <exclude name="Squiz.Commenting.FunctionComment.MissingParamTag"/>
         <exclude name="Generic.Commenting.DocComment.MissingShort"/>
         <exclude name="Squiz.Commenting.ClassComment.Missing"/>
+		<exclude name="Squiz.Commenting.VariableComment.MissingVar"/>
+		<exclude name="Squiz.Commenting.PostStatementComment.Found"/>
+		<exclude name="Squiz.Commenting.VariableComment.WrongStyle"/>
     </rule>
 
 	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
