@@ -96,7 +96,7 @@ class DbApi {
 		if( is_null( $row ) ) {
 			$error_msg = $wpdb->last_error;
 			error_log( $error_msg );
-			throw new Exception(
+			throw new NotFoundException(
 				$error_msg
 			);
 		}
