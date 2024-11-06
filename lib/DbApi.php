@@ -48,8 +48,6 @@ class DbApi {
 			$entry->attendee_id,
 			$entry->order_id
 		);
-		error_log("=== row ===");
-		error_log($prepared);
 
 		$row = $wpdb->get_row( $prepared );
 
