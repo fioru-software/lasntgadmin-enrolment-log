@@ -2,7 +2,7 @@
 
 namespace Lasntg\Admin\EnrolmentLog;
 
-use Lasntg\Admin\EnrolmentLog\{ LogEntry, CustomPostType, CustomDbTable, NotFoundException };
+use Lasntg\Admin\EnrolmentLog\{ LogQuery, LogEntry, CustomPostType, CustomDbTable, NotFoundException };
 
 use WP_Error, Exception, Groups_Post_Access;
 
@@ -13,39 +13,46 @@ class DbApi {
 
 	const ACTIVE_ENROLMENT_STATUS   = 'publish';
 	const CANCELED_ENROLMENT_STATUS = 'cancelled';
+	const PENDING_ENROLMENT_STATUS = 'pending';
+	const AMENDED_ENROLMENT_STATUS = 'closed';
 
-	public static function search_entry( LogEntry $entry ): LogEntry {
+	public static function find_entry( LogQuery $query ): LogEntry {
 
 		global $wpdb;
 		$table_name = CustomDbTable::get_table_name();
 
-		if ( ! isset( $entry->attendee_id ) ) {
+		if ( ! isset( $query->attendee_id ) ) {
 			throw new Exception(
 				'Missing required attendee id'
 			);
 		}
-		if ( ! isset( $entry->course_id ) ) {
+		if ( ! isset( $query->course_id ) ) {
 			throw new Exception(
 				'Missing required course id'
 			);
 		}
-		if ( ! isset( $entry->order_id ) ) {
+		if ( ! isset( $query->order_id ) ) {
 			throw new Exception(
 				'Missing required order id'
 			);
 		}
-		if ( ! isset( $entry->status ) ) {
+		if ( ! isset( $query->status ) ) {
 			throw new Exception(
-				'Missing required post status'
+				'Missing required post statuses'
 			);
 		}
 
+		$statuses = implode( ',',
+			array_map( 
+				fn( $status) => "'".esc_sql($status)."'",
+				$query->status
+			)
+		);
 		$prepared = $wpdb->prepare(
-			"SELECT * FROM $table_name JOIN wp_posts ON $table_name.post_id = wp_posts.ID WHERE wp_posts.post_status = %s AND $table_name.course_id = %d AND $table_name.attendee_id = %d AND $table_name.order_id = %d", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-			$entry->status,
-			$entry->course_id,
-			$entry->attendee_id,
-			$entry->order_id
+			"SELECT * FROM $table_name JOIN wp_posts ON $table_name.post_id = wp_posts.ID WHERE wp_posts.post_status IN ($statuses) AND $table_name.course_id = %d AND $table_name.attendee_id = %d AND $table_name.order_id = %d", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			$query->course_id,
+			$query->attendee_id,
+			$query->order_id
 		);
 
 		$row = $wpdb->get_row( $prepared ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
@@ -174,8 +181,16 @@ class DbApi {
 		global $wpdb;
 
 		try {
-			self::search_entry( $entry );
-			throw new Exception( 'Existing active enrolment' );
+
+			$query = new LogQuery();
+			$query->attendee_id = $entry->attendee_id;
+			$query->order_id = $entry->order_id;
+			$query->course_id = $entry->course_id;
+			$query->status = [ self::ACTIVE_ENROLMENT_STATUS, self::PENDING_ENROLMENT_STATUS ];
+
+			$found = self::find_entry( $query );
+			error_log(print_r($found, true));
+			throw new Exception( 'Existing enrolment' );
 		} catch ( NotFoundException $e ) {
 			$post_id = wp_insert_post(
 				[
@@ -197,7 +212,7 @@ class DbApi {
 				error_log( $wp_error->get_error_message() );
 				throw new Exception(
 					esc_html( $wp_error->get_error_message() ),
-					esc_html( $wp_error->get_error_code() )
+					esc_html( (int)$wp_error->get_error_code() )
 				);
 			}
 

@@ -18,6 +18,7 @@ services:
         - .:/usr/local/src
         - ../lasntgadmin-orders:/var/www/html/wp-content/plugins/lasntgadmin-orders
         - ../lasntgadmin-attendees:/var/www/html/wp-content/plugins/lasntgadmin-attendees
+        - ../lasntgadmin-products:/var/www/html/wp-content/plugins/lasntgadmin-products
       ports:
         - "8080:80"
         - "9443:443"

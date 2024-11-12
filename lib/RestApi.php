@@ -76,7 +76,7 @@ class RestApi {
 		} catch ( Exception $e ) {
 			return new WP_Error(
 				$e->getCode(),
-				$e->getMessage(),
+				$e->getMessage(), // @todo Why is message empty?
 				$entry
 			);
 		}

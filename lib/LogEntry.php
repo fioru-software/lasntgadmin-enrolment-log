@@ -11,7 +11,7 @@ class LogEntry {
 	 */
 	public int $post_id;
 	public int $author_id;
-	public string $status; // Either publish or cancelled status.
+	public string $status; // Either enrolled, cancelled, amended or pending. Prefixed with lasntgadmin-enrolment-log-.
 	public DateTimeImmutable $created;
 	public DateTimeImmutable $modified;
 
