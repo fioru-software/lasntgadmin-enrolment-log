@@ -16,6 +16,7 @@ class AdminEditView {
 	public static function add_actions() {
 		if ( is_admin() ) {
 			add_action( 'admin_enqueue_scripts', [ self::class, 'enqueue_admin_scripts' ], 99 );
+			add_action( 'admin_enqueue_scripts', [ self::class, 'enqueue_admin_styles' ] );
 		}
 	}
 
@@ -40,6 +41,19 @@ class AdminEditView {
 			return false;
 		}
 		return $use_block_editor;
+	}
+
+	public static function enqueue_admin_styles() {
+		if( wc_current_user_has_role('administrator') ) {
+			$style_name = sprintf( '%s-admin-edit-view', PluginUtils::get_kebab_case_name() );
+			wp_register_style( 
+				$style_name, 
+				plugins_url( sprintf( '%s/assets/css/%s.css', PluginUtils::get_kebab_case_name(), $style_name ) ),
+				[],
+				PluginUtils::get_version()
+			);
+			wp_enqueue_style( $style_name );
+		}
 	}
 
 	public static function enqueue_admin_scripts( string $hook ) {

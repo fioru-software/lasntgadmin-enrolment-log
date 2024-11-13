@@ -15,7 +15,7 @@ class AdminListView {
 	public static function add_actions() {
 		if ( is_admin() ) {
 			add_action( 'manage_enrolment_log_posts_custom_column', [ self::class, 'render_columns' ], 10, 2 );
-			add_action( 'admin_enqueue_scripts', [ self::class, 'enqueue_styles' ] );
+			add_action( 'admin_enqueue_scripts', [ self::class, 'enqueue_admin_styles' ] );
 		}
 	}
 
@@ -64,50 +64,87 @@ class AdminListView {
 		return $join;
 	}
 
-	public static function enqueue_styles() {
+	public static function enqueue_admin_styles() {
 		$version = Constants::get_constant( 'WC_VERSION' );
 		$handle  = 'woocommerce_admin_styles';
 		wp_register_style( $handle, WC()->plugin_url() . '/assets/css/admin.css', array(), $version );
 		wp_enqueue_style( $handle );
+
+		$style_name = sprintf( '%s-admin-list-view', PluginUtils::get_kebab_case_name() );
+		wp_register_style( 
+			$style_name, 
+			plugins_url( sprintf( '%s/assets/css/%s.css', PluginUtils::get_kebab_case_name(), $style_name ) ),
+			[],
+			PluginUtils::get_version()
+		);
+		wp_enqueue_style( $style_name );
 	}
 
 	public static function render_columns( string $column, int $post_id ) {
 		$status = get_post_status( $post_id );
-		if ( in_array( $status, [ 'publish','cancelled' ] ) ) {
-			$post = get_post( $post_id );
-			$entry = DbApi::get_entry( $post_id );
-			$attendee_acf_fields = get_fields( $entry->attendee_id );
+		$post = get_post( $post_id );
+		$entry = DbApi::get_entry( $post_id );
+		$attendee_acf_fields = get_fields( $entry->attendee_id );
 
-			switch ( $column ) {
-				case 'attendee_full_name':
-					echo esc_html( sprintf( '%s %s', $attendee_acf_fields['first_name'], $attendee_acf_fields['last_name'] ) );
-					break;
-				case 'attendee_employee_number':
-					echo esc_html( $attendee_acf_fields['employee_number'] );
-					break;
-				case 'attendee_job_title':
-					echo esc_html( $attendee_acf_fields['job_title'] );
-					break;
-				case 'attendee_department':
-					echo esc_html( $attendee_acf_fields['department'] );
-					break;
-				case 'attendee_reasonable_accommodation':
-					echo esc_html( $attendee_acf_fields['special_requirements'] );
-					break;
-				case 'status':
-					// @see woocommerce/assets/css/admin.css
-					$colour = 'cancelled' === $status ? 'on-hold' : 'processing';
-					$status = 'publish' === $status ? 'Enrolled' : $status;
-					echo wp_kses_post( "<mark class='order-status status-$colour tips'><span>" . ucfirst( $status ) . '</span></mark>' );
-					break;
-				case 'comment':
-					echo esc_html( $entry->comment );
-					break;
-				case 'enrolment_date':
-					echo esc_html( $post->post_modified );
-					break;
-			}//end switch
-		}//end if
+		switch ( $column ) {
+		case 'attendee_full_name':
+			echo esc_html( sprintf( '%s %s', $attendee_acf_fields['first_name'], $attendee_acf_fields['last_name'] ) );
+			break;
+		case 'attendee_employee_number':
+			echo esc_html( $attendee_acf_fields['employee_number'] );
+			break;
+		case 'attendee_job_title':
+			echo esc_html( $attendee_acf_fields['job_title'] );
+			break;
+		case 'attendee_department':
+			echo esc_html( $attendee_acf_fields['department'] );
+			break;
+		case 'attendee_reasonable_accommodation':
+			echo esc_html( $attendee_acf_fields['special_requirements'] );
+			break;
+		case 'status':
+			$colour = self::get_status_style_name( $status );
+			$status = EnrolmentLogUtils::get_translated_status_name( $status );
+			echo wp_kses_post( "<mark class='order-status status-$colour tips'><span>" . ucfirst( $status ) . '</span></mark>' );
+			break;
+		case 'comment':
+			echo esc_html( $entry->comment );
+			break;
+		case 'enrolment_date':
+			echo esc_html( $post->post_modified );
+			break;
+		}//end switch
+	}
+
+	private static function get_translated_status_name(): string {
+	}
+
+	/**
+	 * failed: red
+	 * on-hold: yellow
+	 * green: processing
+	 * blue: completed
+	 * grey: -
+	 *
+	 * @see woocommerce/assets/css/admin.css CSS class .order-status
+	 */
+	private static function get_status_style_name( string $status ): string {
+		switch( $status ) {
+			case 'cancelled': // cancelled
+				return 'on-hold'; // yellow
+				break;
+			case 'closed': // removed
+				return 'removed'; // grey
+				break;
+			case 'publish': // publish
+				return 'processing'; // green
+				break;
+			case 'pending': // pending
+				return 'completed'; // blue
+				break;
+			default:
+				return 'failed'; // red
+		}
 	}
 
 	public static function add_columns( array $columns ): array {

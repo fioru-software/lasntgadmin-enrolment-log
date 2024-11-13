@@ -14,12 +14,13 @@ defined( 'ABSPATH' ) || exit;
 // composer autoloading.
 require_once getenv( 'COMPOSER_AUTOLOAD_FILEPATH' );
 
-use Lasntg\Admin\EnrolmentLog\{ PluginUtils, CustomPostType, RestApi, AdminListView, AdminEditView };
+use Lasntg\Admin\EnrolmentLog\{ PluginUtils, CustomPostType, RestApi, AdminListView, AdminEditView, ActionsFilters };
 
 CustomPostType::init();
 RestApi::init();
 AdminListView::init();
 AdminEditView::init();
+ActionsFilters::init();
 
 /**
  * Plugin activation

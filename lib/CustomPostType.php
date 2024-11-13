@@ -51,8 +51,16 @@ class CustomPostType {
 			[
 				'labels'       => self::get_labels(),
 				'public'       => true,
-				'show_in_rest' => true,
+				'hierarchical' => false,
+				'show_ui'	   => true,
 				'supports'     => [ 'author' ],
+				'capability_type' => [ 'enrolment_log', 'enrolment_logs' ],
+				'capabilities'    => array(
+					'create_posts' => false,
+					'read' => 'read',
+				),
+				'map_meta_cap' => true,
+				'show_in_rest' => true,
 			]
 		);
 	}

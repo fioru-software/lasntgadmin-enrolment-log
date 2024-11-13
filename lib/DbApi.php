@@ -14,7 +14,7 @@ class DbApi {
 	const ACTIVE_ENROLMENT_STATUS   = 'publish';
 	const CANCELED_ENROLMENT_STATUS = 'cancelled';
 	const PENDING_ENROLMENT_STATUS = 'pending';
-	const AMENDED_ENROLMENT_STATUS = 'closed';
+	const REMOVED_ENROLMENT_STATUS = 'closed';
 
 	public static function find_entry( LogQuery $query ): LogEntry {
 
