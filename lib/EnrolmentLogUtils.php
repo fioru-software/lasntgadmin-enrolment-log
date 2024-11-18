@@ -5,7 +5,7 @@ namespace Lasntg\Admin\EnrolmentLog;
 class EnrolmentLogUtils {
 
 	public static function get_translated_status_name( string $status ): string {
-		switch( $status ) {
+		switch ( $status ) {
 			case 'publish':
 				return 'Enrolled';
 				break;

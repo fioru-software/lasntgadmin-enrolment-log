@@ -11,40 +11,35 @@ class Capabilities {
 	 * Admin capabilities
 	 */
 	public static function get_administrator_capabilities(): array {
-		return [
-		];
+		return [];
 	}
 
 	/**
 	 * National manager capabilities
 	 */
 	public static function get_national_manager_capabilities(): array {
-		return [
-		];
+		return [];
 	}
 
 	/**
 	 * Regional training officer capabilities
 	 */
 	public static function get_regional_training_centre_manager_capabilities(): array {
-		return [
-		];
+		return [];
 	}
 
 	/**
 	 * Training officer capabilities
 	 */
 	public static function get_training_officer_capabilities(): array {
-		return [
-		];
+		return [];
 	}
 
 	/**
 	 * Fire training officer capabilities
 	 */
 	public static function get_fire_training_officer_capabilities(): array {
-		return [
-		];
+		return [];
 	}
 
 	public static function add(): void {

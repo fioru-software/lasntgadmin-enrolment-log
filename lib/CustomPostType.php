@@ -49,20 +49,19 @@ class CustomPostType {
 		$post_type = register_post_type(
 			self::get_name(),
 			[
-				'labels'       => self::get_labels(),
-				'public'       => true,
-				'hierarchical' => false,
-				'show_ui'	   => true,
-				'supports'     => [ 'author' ],
+				'labels'          => self::get_labels(),
+				'public'          => true,
+				'hierarchical'    => false,
+				'show_ui'         => true,
+				'supports'        => [ 'author' ],
 				'capability_type' => [ 'enrolment_log', 'enrolment_logs' ],
 				'capabilities'    => array(
 					'create_posts' => false,
-					'read' => 'read',
+					'read'         => 'read',
 				),
-				'map_meta_cap' => true,
-				'show_in_rest' => true,
+				'map_meta_cap'    => true,
+				'show_in_rest'    => true,
 			]
 		);
 	}
-
 }

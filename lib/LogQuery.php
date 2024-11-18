@@ -13,5 +13,4 @@ class LogQuery {
 	public int $order_id;
 	public int $attendee_id;
 	public array $status; // publish, cancelled, closed, pending
-
 }

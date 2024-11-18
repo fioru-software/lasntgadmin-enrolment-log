@@ -13,8 +13,8 @@ class DbApi {
 
 	const ACTIVE_ENROLMENT_STATUS   = 'publish';
 	const CANCELED_ENROLMENT_STATUS = 'cancelled';
-	const PENDING_ENROLMENT_STATUS = 'pending';
-	const REMOVED_ENROLMENT_STATUS = 'closed';
+	const PENDING_ENROLMENT_STATUS  = 'pending';
+	const REMOVED_ENROLMENT_STATUS  = 'closed';
 
 	public static function find_entry( LogQuery $query ): LogEntry {
 
@@ -42,9 +42,10 @@ class DbApi {
 			);
 		}
 
-		$statuses = implode( ',',
-			array_map( 
-				fn( $status) => "'".esc_sql($status)."'",
+		$statuses = implode(
+			',',
+			array_map(
+				fn( $status ) => "'" . esc_sql( $status ) . "'",
 				$query->status
 			)
 		);
@@ -181,15 +182,14 @@ class DbApi {
 		global $wpdb;
 
 		try {
-
-			$query = new LogQuery();
+			$query              = new LogQuery();
 			$query->attendee_id = $entry->attendee_id;
-			$query->order_id = $entry->order_id;
-			$query->course_id = $entry->course_id;
-			$query->status = [ self::ACTIVE_ENROLMENT_STATUS, self::PENDING_ENROLMENT_STATUS ];
+			$query->order_id    = $entry->order_id;
+			$query->course_id   = $entry->course_id;
+			$query->status      = [ self::ACTIVE_ENROLMENT_STATUS, self::PENDING_ENROLMENT_STATUS ];
 
 			$found = self::find_entry( $query );
-			error_log(print_r($found, true));
+			error_log( print_r( $found, true ) );
 			throw new Exception( 'Existing enrolment' );
 		} catch ( NotFoundException $e ) {
 			$post_id = wp_insert_post(
@@ -212,7 +212,7 @@ class DbApi {
 				error_log( $wp_error->get_error_message() );
 				throw new Exception(
 					esc_html( $wp_error->get_error_message() ),
-					esc_html( (int)$wp_error->get_error_code() )
+					esc_html( (int) $wp_error->get_error_code() )
 				);
 			}
 

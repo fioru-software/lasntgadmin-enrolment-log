@@ -2,6 +2,8 @@
 
 namespace Lasntg\Admin\EnrolmentLog;
 
+use Lasntg\Admin\EnrolmentLog\CustomPostType;
+
 use Automattic\Jetpack\Constants, WP_Query;
 
 class AdminListView {
@@ -23,7 +25,13 @@ class AdminListView {
 		if ( is_admin() ) {
 			add_filter( 'manage_enrolment_log_posts_columns', [ self::class, 'add_columns' ], 11 );
 			add_filter( 'posts_join', [ self::class, 'handle_filter_request_join' ], 10, 2 );
+			add_filter( 'bulk_actions-edit-enrolment_log', [ self::class, 'modify_bulk_actions_dropdown' ] );
 		}
+	}
+
+	public static function modify_bulk_actions_dropdown( array $actions ) {
+		unset( $actions['edit'] );
+		return $actions;
 	}
 
 	/**
@@ -37,11 +45,11 @@ class AdminListView {
 				if ( 'enrolment_log' === $screen->post_type && 'edit-enrolment_log' === $screen->id && 'enrolment_log' === $query->query_vars['post_type'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 					if ( isset( $_GET['product_id'] ) && ! empty( $_GET['product_id'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-						error_log("=== filter enrolment log by product id ===");
+						error_log( '=== filter enrolment log by product id ===' );
 						$join = self::get_join_to_filter_by_product_id( $join, $query );
 					}
 					if ( isset( $_GET['order_id'] ) && ! empty( $_GET['order_id'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-						error_log("=== filter enrolment log by order id ===");
+						error_log( '=== filter enrolment log by order id ===' );
 						$join = self::get_join_to_filter_by_order_id( $join, $query );
 					}
 				}
@@ -52,14 +60,14 @@ class AdminListView {
 
 	private static function get_join_to_filter_by_product_id( string $join, WP_Query $query ): string {
 		if ( isset( $_GET['product_id'] ) && ! empty( $_GET['product_id'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			$product_id     = absint( $_GET['product_id'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$product_id = absint( $_GET['product_id'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		}//end if
 		return $join;
 	}
 
 	private static function get_join_to_filter_by_order_id( string $join, WP_Query $query ): string {
 		if ( isset( $_GET['order_id'] ) && ! empty( $_GET['order_id'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			$order_id     = absint( $_GET['order_id'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$order_id = absint( $_GET['order_id'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		}
 		return $join;
 	}
@@ -71,8 +79,8 @@ class AdminListView {
 		wp_enqueue_style( $handle );
 
 		$style_name = sprintf( '%s-admin-list-view', PluginUtils::get_kebab_case_name() );
-		wp_register_style( 
-			$style_name, 
+		wp_register_style(
+			$style_name,
 			plugins_url( sprintf( '%s/assets/css/%s.css', PluginUtils::get_kebab_case_name(), $style_name ) ),
 			[],
 			PluginUtils::get_version()
@@ -81,38 +89,38 @@ class AdminListView {
 	}
 
 	public static function render_columns( string $column, int $post_id ) {
-		$status = get_post_status( $post_id );
-		$post = get_post( $post_id );
-		$entry = DbApi::get_entry( $post_id );
+		$status              = get_post_status( $post_id );
+		$post                = get_post( $post_id );
+		$entry               = DbApi::get_entry( $post_id );
 		$attendee_acf_fields = get_fields( $entry->attendee_id );
 
 		switch ( $column ) {
-		case 'attendee_full_name':
-			echo esc_html( sprintf( '%s %s', $attendee_acf_fields['first_name'], $attendee_acf_fields['last_name'] ) );
-			break;
-		case 'attendee_employee_number':
-			echo esc_html( $attendee_acf_fields['employee_number'] );
-			break;
-		case 'attendee_job_title':
-			echo esc_html( $attendee_acf_fields['job_title'] );
-			break;
-		case 'attendee_department':
-			echo esc_html( $attendee_acf_fields['department'] );
-			break;
-		case 'attendee_reasonable_accommodation':
-			echo esc_html( $attendee_acf_fields['special_requirements'] );
-			break;
-		case 'status':
-			$colour = self::get_status_style_name( $status );
-			$status = EnrolmentLogUtils::get_translated_status_name( $status );
-			echo wp_kses_post( "<mark class='order-status status-$colour tips'><span>" . ucfirst( $status ) . '</span></mark>' );
-			break;
-		case 'comment':
-			echo esc_html( $entry->comment );
-			break;
-		case 'enrolment_date':
-			echo esc_html( $post->post_modified );
-			break;
+			case 'attendee_full_name':
+				echo esc_html( sprintf( '%s %s', $attendee_acf_fields['first_name'], $attendee_acf_fields['last_name'] ) );
+				break;
+			case 'attendee_employee_number':
+				echo esc_html( $attendee_acf_fields['employee_number'] );
+				break;
+			case 'attendee_job_title':
+				echo esc_html( $attendee_acf_fields['job_title'] );
+				break;
+			case 'attendee_department':
+				echo esc_html( $attendee_acf_fields['department'] );
+				break;
+			case 'attendee_reasonable_accommodation':
+				echo esc_html( $attendee_acf_fields['special_requirements'] );
+				break;
+			case 'status':
+				$colour = self::get_status_style_name( $status );
+				$status = EnrolmentLogUtils::get_translated_status_name( $status );
+				echo wp_kses_post( "<mark class='order-status status-$colour tips'><span>" . ucfirst( $status ) . '</span></mark>' );
+				break;
+			case 'comment':
+				echo esc_html( $entry->comment );
+				break;
+			case 'enrolment_date':
+				echo esc_html( $post->post_modified );
+				break;
 		}//end switch
 	}
 
@@ -129,7 +137,7 @@ class AdminListView {
 	 * @see woocommerce/assets/css/admin.css CSS class .order-status
 	 */
 	private static function get_status_style_name( string $status ): string {
-		switch( $status ) {
+		switch ( $status ) {
 			case 'cancelled': // cancelled
 				return 'on-hold'; // yellow
 				break;
@@ -158,14 +166,14 @@ class AdminListView {
 		unset( $columns['groups-read'] );
 		unset( $columns['title'] );
 
-		$columns['attendee_full_name']    = __( 'Full Name', 'lasntgadmin' );
-		$columns['attendee_employee_number']   = __( 'Employee Number', 'lasntgadmin' );
-		$columns['attendee_job_title'] = __( 'Job Title', 'lasntgadmin' );
-		$columns['attendee_department']     = __( 'Department', 'lasntgadmin' );
-		$columns['attendee_reasonable_accommodation']     = __( 'Reasonable Accommodation', 'lasntgadmin' );
-		$columns['status']      = __( 'Status', 'lasntgadmin' );
-		$columns['comment']      = __( 'Comment', 'lasntgadmin' );
-		$columns['enrolment_date']        = __( 'Date', 'lasntgadmin' );
+		$columns['attendee_full_name']                = __( 'Full Name', 'lasntgadmin' );
+		$columns['attendee_employee_number']          = __( 'Employee Number', 'lasntgadmin' );
+		$columns['attendee_job_title']                = __( 'Job Title', 'lasntgadmin' );
+		$columns['attendee_department']               = __( 'Department', 'lasntgadmin' );
+		$columns['attendee_reasonable_accommodation'] = __( 'Reasonable Accommodation', 'lasntgadmin' );
+		$columns['status']                            = __( 'Status', 'lasntgadmin' );
+		$columns['comment']                           = __( 'Comment', 'lasntgadmin' );
+		$columns['enrolment_date']                    = __( 'Date', 'lasntgadmin' );
 		return $columns;
 	}
 }

@@ -44,10 +44,10 @@ class AdminEditView {
 	}
 
 	public static function enqueue_admin_styles() {
-		if( wc_current_user_has_role('administrator') ) {
+		if ( wc_current_user_has_role( 'administrator' ) ) {
 			$style_name = sprintf( '%s-admin-edit-view', PluginUtils::get_kebab_case_name() );
-			wp_register_style( 
-				$style_name, 
+			wp_register_style(
+				$style_name,
 				plugins_url( sprintf( '%s/assets/css/%s.css', PluginUtils::get_kebab_case_name(), $style_name ) ),
 				[],
 				PluginUtils::get_version()
