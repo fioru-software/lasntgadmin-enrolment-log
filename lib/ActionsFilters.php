@@ -2,7 +2,7 @@
 
 namespace Lasntg\Admin\EnrolmentLog;
 
-use Lasntg\Admin\EnrolmentLog\{ CustomDbTable, DbApi };
+use Lasntg\Admin\EnrolmentLog\{ CustomDbTable, DbApi, CustomPostType };
 use WC_Order;
 
 class ActionsFilters {
@@ -18,9 +18,21 @@ class ActionsFilters {
 		add_action( 'woocommerce_payment_complete', [ self::class, 'publish_entries' ], 10, 2 );
 		// Set enrolment log entries status = cancelled
 		add_action( 'woocommerce_order_status_cancelled', [ self::class, 'cancel_entries' ], 50, 2 );
+		add_action( 'admin_menu', [ self::class, 'add_submenu' ] );
 	}
 
 	public static function add_filters() {
+	}
+
+
+	public static function add_submenu() {
+		add_submenu_page(
+			'woocommerce',
+			__( 'Enrolment Log', 'lasntgadmin' ),
+			__( 'Enrolment Log', 'lasntgadmin' ),
+			'view_enrolment_log',
+			sprintf( 'edit.php?post_type=%s', CustomPostType::get_name() )
+		);
 	}
 
 	public static function cancel_entries( int $order_id, WC_Order $order ) {
@@ -91,29 +103,22 @@ class ActionsFilters {
 
 		$wpdb->query( 'START TRANSACTION' );
 
-		$count = 0;
+		$results = [];
 		foreach ( $post_ids as $post_id ) {
-			$count += $wpdb->query(
-				$wpdb->prepare(
-					"UPDATE $wpdb->posts SET post_status = %s WHERE ID = %d AND post_status = %s",
-					DbApi::ACTIVE_ENROLMENT_STATUS,
-					$post_id,
-					DbApi::PENDING_ENROLMENT_STATUS
+			array_push(
+				$results,
+				$wpdb->query(
+					$wpdb->prepare(
+						"UPDATE $wpdb->posts SET post_status = %s WHERE ID = %d AND post_status = %s",
+						DbApi::ACTIVE_ENROLMENT_STATUS,
+						$post_id,
+						DbApi::PENDING_ENROLMENT_STATUS
+					)
 				)
 			);
 		}
 
-		if ( $count === count( $post_ids ) ) {
-			$wpdb->query( 'COMMIT' );
-			wp_admin_notice(
-				"Enrolled $count attendees",
-				[
-					'type'        => 'success',
-					'dismissible' => true,
-
-				]
-			);
-		} else {
+		if ( in_array( false, $results, true ) ) {
 			$wpdb->query( 'ROLLBACK' );
 			error_log( "=== Unable to enrol attendees for order $order_id ===" );
 			error_log( $wpdb->last_error );
@@ -124,6 +129,16 @@ class ActionsFilters {
 				[
 					'type'        => 'error',
 					'dismissible' => true,
+				]
+			);
+		} else {
+			$wpdb->query( 'COMMIT' );
+			wp_admin_notice(
+				"Enrolled $count attendees",
+				[
+					'type'        => 'success',
+					'dismissible' => true,
+
 				]
 			);
 		}//end if

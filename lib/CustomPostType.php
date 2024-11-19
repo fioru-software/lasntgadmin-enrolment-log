@@ -61,6 +61,7 @@ class CustomPostType {
 				),
 				'map_meta_cap'    => true,
 				'show_in_rest'    => true,
+				'show_in_menu'    => false,
 			]
 		);
 	}

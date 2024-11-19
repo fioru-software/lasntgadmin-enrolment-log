@@ -11,7 +11,9 @@ class Capabilities {
 	 * Admin capabilities
 	 */
 	public static function get_administrator_capabilities(): array {
-		return [];
+		return [
+			'',
+		];
 	}
 
 	/**
