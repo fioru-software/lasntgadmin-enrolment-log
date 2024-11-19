@@ -30,7 +30,7 @@ class ActionsFilters {
 			'woocommerce',
 			__( 'Enrolment Log', 'lasntgadmin' ),
 			__( 'Enrolment Log', 'lasntgadmin' ),
-			'view_enrolment_log',
+			'view_enrolment_logs',
 			sprintf( 'edit.php?post_type=%s', CustomPostType::get_name() )
 		);
 	}
@@ -49,30 +49,23 @@ class ActionsFilters {
 
 		$wpdb->query( 'START TRANSACTION' );
 
-		$count = 0;
+		$results = [];
 		foreach ( $post_ids as $post_id ) {
-			$count += $wpdb->query(
-				$wpdb->prepare(
-					"UPDATE $wpdb->posts SET post_status = %s WHERE ID = %d AND post_status IN (%s, %s)",
-					DbApi::CANCELED_ENROLMENT_STATUS,
-					$post_id,
-					DbApi::PENDING_ENROLMENT_STATUS,
-					DbApi::ACTIVE_ENROLMENT_STATUS
+			array_push(
+				$results, 
+				$wpdb->query(
+					$wpdb->prepare(
+						"UPDATE $wpdb->posts SET post_status = %s WHERE ID = %d AND post_status IN (%s, %s)",
+						DbApi::CANCELED_ENROLMENT_STATUS,
+						$post_id,
+						DbApi::PENDING_ENROLMENT_STATUS,
+						DbApi::ACTIVE_ENROLMENT_STATUS
+					)
 				)
 			);
 		}
 
-		if ( $count === count( $post_ids ) ) {
-			$wpdb->query( 'COMMIT' );
-			wp_admin_notice(
-				"Cancelled $count attendees",
-				[
-					'type'        => 'success',
-					'dismissible' => true,
-
-				]
-			);
-		} else {
+		if ( in_array( false, $results, true ) ) {
 			$wpdb->query( 'ROLLBACK' );
 			error_log( "=== Unable to cancel attendees for order $order_id ===" );
 			error_log( $wpdb->last_error );
@@ -83,7 +76,17 @@ class ActionsFilters {
 					'dismissible' => true,
 				]
 			);
-		}//end if
+		} else {
+			$wpdb->query( 'COMMIT' );
+			wp_admin_notice(
+				"Cancelled $count attendees",
+				[
+					'type'        => 'success',
+					'dismissible' => true,
+
+				]
+			);
+		}
 	}
 
 	/**

@@ -72,20 +72,26 @@ class AdminListView {
 		return $join;
 	}
 
-	public static function enqueue_admin_styles() {
-		$version = Constants::get_constant( 'WC_VERSION' );
-		$handle  = 'woocommerce_admin_styles';
-		wp_register_style( $handle, WC()->plugin_url() . '/assets/css/admin.css', array(), $version );
-		wp_enqueue_style( $handle );
+	public static function enqueue_admin_styles( string $hook ) {
+		if ( in_array( $hook, [ 'edit.php' ], true ) ) {
+			if ( function_exists( 'get_post_type' ) ) {
+				if ( CustomPostType::get_name() === get_post_type() ) {
+					$version = Constants::get_constant( 'WC_VERSION' );
+					$handle  = 'woocommerce_admin_styles';
+					wp_register_style( $handle, WC()->plugin_url() . '/assets/css/admin.css', array(), $version );
+					wp_enqueue_style( $handle );
 
-		$style_name = sprintf( '%s-admin-list-view', PluginUtils::get_kebab_case_name() );
-		wp_register_style(
-			$style_name,
-			plugins_url( sprintf( '%s/assets/css/%s.css', PluginUtils::get_kebab_case_name(), $style_name ) ),
-			[],
-			PluginUtils::get_version()
-		);
-		wp_enqueue_style( $style_name );
+					$style_name = sprintf( '%s-admin-list-view', PluginUtils::get_kebab_case_name() );
+					wp_register_style(
+						$style_name,
+						plugins_url( sprintf( '%s/assets/css/%s.css', PluginUtils::get_kebab_case_name(), $style_name ) ),
+						[],
+						PluginUtils::get_version()
+					);
+					wp_enqueue_style( $style_name );
+				}
+			}
+		}
 	}
 
 	public static function render_columns( string $column, int $post_id ) {

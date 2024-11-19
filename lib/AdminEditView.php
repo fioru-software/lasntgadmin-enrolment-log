@@ -43,16 +43,20 @@ class AdminEditView {
 		return $use_block_editor;
 	}
 
-	public static function enqueue_admin_styles() {
-		if ( wc_current_user_has_role( 'administrator' ) ) {
-			$style_name = sprintf( '%s-admin-edit-view', PluginUtils::get_kebab_case_name() );
-			wp_register_style(
-				$style_name,
-				plugins_url( sprintf( '%s/assets/css/%s.css', PluginUtils::get_kebab_case_name(), $style_name ) ),
-				[],
-				PluginUtils::get_version()
-			);
-			wp_enqueue_style( $style_name );
+	public static function enqueue_admin_styles( string $hook ) {
+		if ( in_array( $hook, [ 'post-new.php', 'post.php' ], true ) ) {
+			if ( function_exists( 'get_post_type' ) ) {
+				if ( CustomPostType::get_name() === get_post_type() ) {
+					$style_name = sprintf( '%s-admin-edit-view', PluginUtils::get_kebab_case_name() );
+					wp_register_style(
+						$style_name,
+						plugins_url( sprintf( '%s/assets/css/%s.css', PluginUtils::get_kebab_case_name(), $style_name ) ),
+						[],
+						PluginUtils::get_version()
+					);
+					wp_enqueue_style( $style_name );
+				}
+			}
 		}
 	}
 
