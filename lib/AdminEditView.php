@@ -71,7 +71,6 @@ class AdminEditView {
 						[ 'jquery' ],
 						PluginUtils::get_version(),
 						[
-							'strategy'  => 'async',
 							'in_footer' => true,
 						]
 					);

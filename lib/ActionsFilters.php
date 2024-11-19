@@ -14,14 +14,45 @@ class ActionsFilters {
 	}
 
 	public static function add_actions() {
-		// Set enrolment log entries status = publish.
-		add_action( 'woocommerce_payment_complete', [ self::class, 'publish_entries' ], 10, 2 );
-		// Set enrolment log entries status = cancelled
-		add_action( 'woocommerce_order_status_cancelled', [ self::class, 'cancel_entries' ], 50, 2 );
-		add_action( 'admin_menu', [ self::class, 'add_submenu' ] );
+		// Wrap function body in is_admin() conditional.
+		if( is_admin() ) {
+
+			// Set enrolment log entries status = publish.
+			add_action( 'woocommerce_payment_complete', [ self::class, 'publish_entries' ], 10, 2 );
+
+			// Set enrolment log entries status = cancelled
+			add_action( 'woocommerce_order_status_cancelled', [ self::class, 'cancel_entries' ], 50, 2 );
+
+			// Add enrolment log to WooCommerce menu.
+			add_action( 'admin_menu', [ self::class, 'add_submenu' ] );
+
+			// Prompt for order cancellation reason and add to the order's enrolment log entries.
+			add_action( 'admin_enqueue_scripts', [ self::class, 'enqueue_script_to_order_list_view' ] );
+		}
 	}
 
 	public static function add_filters() {
+		// Wrap function body in is_admin() conditional.
+	}
+
+	public static function enqueue_script_to_order_list_view( string $hook ) {
+		if ( in_array( $hook, [ 'edit.php' ], true ) ) {
+			if ( function_exists( 'get_post_type' ) ) {
+				if ( 'shop_order' === get_post_type() ) {
+					$script_name = sprintf( '%s-bulk-action-order-cancellation-prompt', PluginUtils::get_kebab_case_name() );
+					wp_register_script(
+						$script_name,
+						plugins_url( sprintf( '%s/assets/js/%s.js', PluginUtils::get_kebab_case_name(), $script_name ) ),
+						[ 'jquery' ],
+						PluginUtils::get_version(),
+						[
+							'in_footer' => true,
+						]
+					);
+					wp_enqueue_script( $script_name );
+				}
+			}
+		}
 	}
 
 
