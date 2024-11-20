@@ -4,7 +4,7 @@ namespace Lasntg\Admin\EnrolmentLog;
 
 use Lasntg\Admin\EnrolmentLog\CustomPostType;
 
-use Automattic\Jetpack\Constants, WP_Query;
+use Automattic\Jetpack\Constants, WP_Query, WC_Order;
 
 class AdminListView {
 
@@ -18,6 +18,7 @@ class AdminListView {
 		if ( is_admin() ) {
 			add_action( 'manage_enrolment_log_posts_custom_column', [ self::class, 'render_columns' ], 10, 2 );
 			add_action( 'admin_enqueue_scripts', [ self::class, 'enqueue_admin_styles' ] );
+			add_action( 'woocommerce_order_status_cancelled', [ self::class, 'add_cancellation_reasons' ], 50, 2 );
 		}
 	}
 
@@ -28,6 +29,57 @@ class AdminListView {
 			add_filter( 'bulk_actions-edit-enrolment_log', [ self::class, 'modify_bulk_actions_dropdown' ] );
 		}
 	}
+
+	/**
+	 * $_GET
+	 * [enrolment_log_order_cancellations] => {\"256\":\"Hello\"}
+	 * [post_type] => shop_order
+	 * [_wpnonce] => a65ff286e9
+	 * [action] => mark_cancelled
+	 */
+	public static function add_cancellation_reasons( int $order_id, WC_Order $order ): void {
+		global $wpdb;
+
+		if ( self::is_expected_get_request( [ 'post_type', '_wpnonce', 'action', 'enrolment_log_order_cancellations' ] ) ) {
+			if ( 'mark_cancelled' === $_GET['action'] && 'shop_order' === $_GET['post_type'] ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated
+				$reasons = json_decode( sanitize_text_field( wp_unslash( $_GET['enrolment_log_order_cancellations'] ) ), true ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated
+				$reason = $reasons[ "$order_id" ];
+
+				// Add reason to all enrolment log entries with order_id = $order_id AND with post_status = completed
+				$enrolment_log_table = CustomDbTable::get_table_name();
+				$result              = $wpdb->query(
+					$wpdb->prepare(
+						"UPDATE $enrolment_log_table JOIN $wpdb->posts ON $enrolment_log_table.post_id = $wpdb->posts.ID SET $enrolment_log_table.comment = %s WHERE $enrolment_log_table.order_id = %d AND $wpdb->posts.post_status = %s", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+						$reason,
+						$order_id,
+						DbApi::ACTIVE_ENROLMENT_STATUS
+					)
+				);
+
+				if ( false === $result ) {
+					error_log( "=== Unable to add order cancellation reason to enrolment logs for order $order_id ===" );
+					error_log( $wpdb->last_error );
+					wp_admin_notice(
+						'Unable to add cancellation reason to enrolment logs',
+						[
+							'type'        => 'error',
+							'dismissible' => true,
+						]
+					);
+				}
+			}//end if
+		}//end if
+	}
+
+	private static function is_expected_get_request( array $keys ): bool {
+		foreach ( $keys as $key ) {
+			if ( ! isset( $_GET[ $key ] ) || empty( $_GET[ $key ] ) ) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 
 	public static function modify_bulk_actions_dropdown( array $actions ) {
 		unset( $actions['edit'] );
@@ -45,11 +97,9 @@ class AdminListView {
 				if ( 'enrolment_log' === $screen->post_type && 'edit-enrolment_log' === $screen->id && 'enrolment_log' === $query->query_vars['post_type'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 					if ( isset( $_GET['product_id'] ) && ! empty( $_GET['product_id'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-						error_log( '=== filter enrolment log by product id ===' );
 						$join = self::get_join_to_filter_by_product_id( $join, $query );
 					}
 					if ( isset( $_GET['order_id'] ) && ! empty( $_GET['order_id'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-						error_log( '=== filter enrolment log by order id ===' );
 						$join = self::get_join_to_filter_by_order_id( $join, $query );
 					}
 				}
@@ -81,17 +131,19 @@ class AdminListView {
 					wp_register_style( $handle, WC()->plugin_url() . '/assets/css/admin.css', array(), $version );
 					wp_enqueue_style( $handle );
 
-					$style_name = sprintf( '%s-admin-list-view', PluginUtils::get_kebab_case_name() );
-					wp_register_style(
-						$style_name,
-						plugins_url( sprintf( '%s/assets/css/%s.css', PluginUtils::get_kebab_case_name(), $style_name ) ),
-						[],
-						PluginUtils::get_version()
-					);
-					wp_enqueue_style( $style_name );
+					if ( ! wc_current_user_has_role( 'administrator' ) ) {
+						$style_name = sprintf( '%s-admin-list-view', PluginUtils::get_kebab_case_name() );
+						wp_register_style(
+							$style_name,
+							plugins_url( sprintf( '%s/assets/css/%s.css', PluginUtils::get_kebab_case_name(), $style_name ) ),
+							[],
+							PluginUtils::get_version()
+						);
+						wp_enqueue_style( $style_name );
+					}
 				}
 			}
-		}
+		}//end if
 	}
 
 	public static function render_columns( string $column, int $post_id ) {

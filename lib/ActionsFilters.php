@@ -14,14 +14,14 @@ class ActionsFilters {
 	}
 
 	public static function add_actions() {
+		// Set enrolment log entries status = publish.
+		add_action( 'woocommerce_payment_complete', [ self::class, 'publish_entries' ], 10, 2 );
+
+		// Set enrolment log entries status = cancelled
+		add_action( 'woocommerce_order_status_cancelled', [ self::class, 'cancel_entries' ], 50, 2 );
+
 		// Wrap function body in is_admin() conditional.
-		if( is_admin() ) {
-
-			// Set enrolment log entries status = publish.
-			add_action( 'woocommerce_payment_complete', [ self::class, 'publish_entries' ], 10, 2 );
-
-			// Set enrolment log entries status = cancelled
-			add_action( 'woocommerce_order_status_cancelled', [ self::class, 'cancel_entries' ], 50, 2 );
+		if ( is_admin() ) {
 
 			// Add enrolment log to WooCommerce menu.
 			add_action( 'admin_menu', [ self::class, 'add_submenu' ] );
@@ -83,7 +83,7 @@ class ActionsFilters {
 		$results = [];
 		foreach ( $post_ids as $post_id ) {
 			array_push(
-				$results, 
+				$results,
 				$wpdb->query(
 					$wpdb->prepare(
 						"UPDATE $wpdb->posts SET post_status = %s WHERE ID = %d AND post_status IN (%s, %s)",
@@ -109,6 +109,14 @@ class ActionsFilters {
 			);
 		} else {
 			$wpdb->query( 'COMMIT' );
+			$count = array_reduce(
+				$results,
+				function ( $carry, $item ) {
+					$carry += $item;
+					return $carry;
+				},
+				0
+			);
 			wp_admin_notice(
 				"Cancelled $count attendees",
 				[
@@ -117,7 +125,7 @@ class ActionsFilters {
 
 				]
 			);
-		}
+		}//end if
 	}
 
 	/**
