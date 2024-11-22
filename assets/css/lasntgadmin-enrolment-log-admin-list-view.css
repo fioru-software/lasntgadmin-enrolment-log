@@ -1,3 +1,7 @@
 div.row-actions {
 	display:none;
 }
+
+p.search-box, div.groups-groups-container {
+	display: none;
+}

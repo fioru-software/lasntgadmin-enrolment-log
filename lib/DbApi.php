@@ -189,7 +189,6 @@ class DbApi {
 			$query->status      = [ self::ACTIVE_ENROLMENT_STATUS, self::PENDING_ENROLMENT_STATUS ];
 
 			$found = self::find_entry( $query );
-			error_log( print_r( $found, true ) );
 			throw new Exception( 'Existing enrolment' );
 		} catch ( NotFoundException $e ) {
 			$post_id = wp_insert_post(

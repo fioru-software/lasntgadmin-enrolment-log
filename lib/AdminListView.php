@@ -8,7 +8,6 @@ use Automattic\Jetpack\Constants, WP_Query, WC_Order;
 
 class AdminListView {
 
-
 	public static function init() {
 		self::add_actions();
 		self::add_filters();
@@ -25,8 +24,11 @@ class AdminListView {
 	public static function add_filters() {
 		if ( is_admin() ) {
 			add_filter( 'manage_enrolment_log_posts_columns', [ self::class, 'add_columns' ], 11 );
-			add_filter( 'posts_join', [ self::class, 'handle_filter_request_join' ], 10, 2 );
 			add_filter( 'bulk_actions-edit-enrolment_log', [ self::class, 'modify_bulk_actions_dropdown' ] );
+
+			// From product and order row action link.
+			add_filter( 'posts_join', [ self::class, 'handle_join_clause_for_filter_request' ], 10, 2 );
+			add_filter( 'posts_where', [ self::class, 'handle_where_clause_for_filter_request' ], 10, 2 );
 		}
 	}
 
@@ -43,7 +45,7 @@ class AdminListView {
 		if ( self::is_expected_get_request( [ 'post_type', '_wpnonce', 'action', 'enrolment_log_order_cancellations' ] ) ) {
 			if ( 'mark_cancelled' === $_GET['action'] && 'shop_order' === $_GET['post_type'] ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated
 				$reasons = json_decode( sanitize_text_field( wp_unslash( $_GET['enrolment_log_order_cancellations'] ) ), true ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated
-				$reason = $reasons[ "$order_id" ];
+				$reason  = $reasons[ "$order_id" ];
 
 				// Add reason to all enrolment log entries with order_id = $order_id AND with post_status = completed
 				$enrolment_log_table = CustomDbTable::get_table_name();
@@ -87,20 +89,19 @@ class AdminListView {
 	}
 
 	/**
-	 * Add additional filters dropdowns.
+	 * When clicking on enrolment logs from product row actions.
 	 */
-	public static function handle_filter_request_join( string $join, WP_Query $query ): string {
+	public static function handle_join_clause_for_filter_request( string $join, WP_Query $query ): string {
 
 		if ( ! is_search() && is_admin() && function_exists( 'get_current_screen' ) ) {
 			$screen = get_current_screen();
 			if ( ! is_null( $screen ) ) {
 				if ( 'enrolment_log' === $screen->post_type && 'edit-enrolment_log' === $screen->id && 'enrolment_log' === $query->query_vars['post_type'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-
 					if ( isset( $_GET['product_id'] ) && ! empty( $_GET['product_id'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-						$join = self::get_join_to_filter_by_product_id( $join, $query );
+						$join .= self::get_join_clause_to_filter_by_product_id( $join, $query );
 					}
 					if ( isset( $_GET['order_id'] ) && ! empty( $_GET['order_id'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-						$join = self::get_join_to_filter_by_order_id( $join, $query );
+						$join .= self::get_join_clause_to_filter_by_order_id( $join, $query );
 					}
 				}
 			}
@@ -108,19 +109,77 @@ class AdminListView {
 		return $join;
 	}
 
-	private static function get_join_to_filter_by_product_id( string $join, WP_Query $query ): string {
-		if ( isset( $_GET['product_id'] ) && ! empty( $_GET['product_id'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			$product_id = absint( $_GET['product_id'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	/**
+	 * When clicking on enrolment logs from product row actions.
+	 */
+	public static function handle_where_clause_for_filter_request( string $where, WP_Query $query ): string {
+
+		if ( ! is_search() && is_admin() && function_exists( 'get_current_screen' ) ) {
+			$screen = get_current_screen();
+			if ( ! is_null( $screen ) ) {
+				if ( 'enrolment_log' === $screen->post_type && 'edit-enrolment_log' === $screen->id && 'enrolment_log' === $query->query_vars['post_type'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+					if ( isset( $_GET['product_id'] ) && ! empty( $_GET['product_id'] && ! isset( $_GET['order_id'] ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+						$where .= self::get_where_clause_to_filter_by_product_id( $where, $query );
+					}
+					if ( isset( $_GET['order_id'] ) && ! empty( $_GET['order_id'] ) && ! isset( $_GET['product_id'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+						$where .= self::get_where_clause_to_filter_by_order_id( $where, $query );
+					}
+				}
+			}
 		}//end if
+		return $where;
+	}
+
+	/**
+	 * Joins enrolment_logs table to wp_posts table when product_id query param is present.
+	 *
+	 * @see self:handle_join_clause_for_filter_request()
+	 */
+	private static function get_join_clause_to_filter_by_product_id( string $join, WP_Query $query ): string {
+		global $wpdb;
+		$table_name = CustomDbTable::get_table_name();
+		$join       = "JOIN $table_name ON $wpdb->posts.ID = $table_name.post_id ";
 		return $join;
 	}
 
-	private static function get_join_to_filter_by_order_id( string $join, WP_Query $query ): string {
-		if ( isset( $_GET['order_id'] ) && ! empty( $_GET['order_id'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			$order_id = absint( $_GET['order_id'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		}
+	/**
+	 * Joins enrolment_logs table to wp_posts table when order_id query param is present.
+	 *
+	 * @see self:handle_join_clause_for_filter_request()
+	 */
+	private static function get_join_clause_to_filter_by_order_id( string $join, WP_Query $query ): string {
+		global $wpdb;
+		$table_name = CustomDbTable::get_table_name();
+		$join       = "JOIN $table_name ON $wpdb->posts.ID = $table_name.post_id ";
 		return $join;
 	}
+
+	/**
+	 * Where enrolment_logs.course_id = product_id query param.
+	 *
+	 * @see self:handle_where_clause_for_filter_request()
+	 */
+	private static function get_where_clause_to_filter_by_product_id( string $where, WP_Query $query ): string {
+		global $wpdb;
+		$product_id = absint( $_GET['product_id'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended,WordPress.Security.ValidatedSanitizedInput.InputNotValidated
+		$table_name = CustomDbTable::get_table_name();
+		$where      = " AND $table_name.course_id = $product_id ";
+		return $where;
+	}
+
+	/**
+	 * Where enrolment_logs.order_id = order_id query param.
+	 *
+	 * @see self:handle_where_clause_for_filter_request()
+	 */
+	private static function get_where_clause_to_filter_by_order_id( string $where, WP_Query $query ): string {
+		global $wpdb;
+		$order_id   = absint( $_GET['order_id'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended,WordPress.Security.ValidatedSanitizedInput.InputNotValidated
+		$table_name = CustomDbTable::get_table_name();
+		$where      = " AND $table_name.order_id = $order_id ";
+		return $where;
+	}
+
 
 	public static function enqueue_admin_styles( string $hook ) {
 		if ( in_array( $hook, [ 'edit.php' ], true ) ) {
@@ -131,16 +190,14 @@ class AdminListView {
 					wp_register_style( $handle, WC()->plugin_url() . '/assets/css/admin.css', array(), $version );
 					wp_enqueue_style( $handle );
 
-					if ( ! wc_current_user_has_role( 'administrator' ) ) {
-						$style_name = sprintf( '%s-admin-list-view', PluginUtils::get_kebab_case_name() );
-						wp_register_style(
-							$style_name,
-							plugins_url( sprintf( '%s/assets/css/%s.css', PluginUtils::get_kebab_case_name(), $style_name ) ),
-							[],
-							PluginUtils::get_version()
-						);
-						wp_enqueue_style( $style_name );
-					}
+					$style_name = sprintf( '%s-admin-list-view', PluginUtils::get_kebab_case_name() );
+					wp_register_style(
+						$style_name,
+						plugins_url( sprintf( '%s/assets/css/%s.css', PluginUtils::get_kebab_case_name(), $style_name ) ),
+						[],
+						PluginUtils::get_version()
+					);
+					wp_enqueue_style( $style_name );
 				}
 			}
 		}//end if
