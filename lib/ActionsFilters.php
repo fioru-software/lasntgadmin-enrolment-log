@@ -176,7 +176,7 @@ class ActionsFilters {
 		} else {
 			$wpdb->query( 'COMMIT' );
 			wp_admin_notice(
-				"Enrolled $count attendees",
+				sprintf( 'Enrolled %d attendees', count( $results ) ),
 				[
 					'type'        => 'success',
 					'dismissible' => true,

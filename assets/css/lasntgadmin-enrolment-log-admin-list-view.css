@@ -5,3 +5,7 @@ div.row-actions {
 p.search-box, div.groups-groups-container {
 	display: none;
 }
+
+ul.subsubsub {
+	display: none;
+}

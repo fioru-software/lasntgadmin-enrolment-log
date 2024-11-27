@@ -44,6 +44,7 @@ class AdminListView {
 
 		if ( self::is_expected_get_request( [ 'post_type', '_wpnonce', 'action', 'enrolment_log_order_cancellations' ] ) ) {
 			if ( 'mark_cancelled' === $_GET['action'] && 'shop_order' === $_GET['post_type'] ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated
+
 				$reasons = json_decode( sanitize_text_field( wp_unslash( $_GET['enrolment_log_order_cancellations'] ) ), true ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated
 				$reason  = $reasons[ "$order_id" ];
 
