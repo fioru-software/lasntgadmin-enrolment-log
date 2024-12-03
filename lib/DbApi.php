@@ -16,6 +16,73 @@ class DbApi {
 	const PENDING_ENROLMENT_STATUS  = 'pending';
 	const REMOVED_ENROLMENT_STATUS  = 'closed';
 
+	/**
+	 * @return LogEntry[]
+	 * @throws Exception When missing status.
+	 */
+	public static function find_entries( LogQuery $query ): array {
+
+		global $wpdb;
+		$table_name = CustomDbTable::get_table_name();
+
+		if ( ! isset( $query->status ) ) {
+			throw new Exception(
+				'Missing required post statuses'
+			);
+		}
+
+		$statuses = implode(
+			',',
+			array_map(
+				fn( $status ) => "'" . esc_sql( $status ) . "'",
+				$query->status
+			)
+		);
+
+		$prepared = "SELECT * FROM $table_name JOIN wp_posts ON $table_name.post_id = wp_posts.ID WHERE wp_posts.post_status IN ($statuses)"; // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+
+		if ( isset( $query->course_id ) ) {
+			$prepared = $wpdb->prepare(
+				"$prepared AND $table_name.course_id = %d", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				intval( $query->course_id )
+			);
+		}
+
+		if ( isset( $query->attendee_id ) ) {
+			$prepared = $wpdb->prepare(
+				"$prepared AND $table_name.attendee_id = %d", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				intval( $query->attendee_id )
+			);
+		}
+
+		if ( isset( $query->order_id ) ) {
+			$prepared = $wpdb->prepare(
+				"$prepared AND $table_name.order_id = %d", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				intval( $query->order_id )
+			);
+		}
+
+		$rows = $wpdb->get_results( $prepared ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+
+		$log_entries = [];
+
+		foreach ( $rows as $row ) {
+			$log_entry              = new LogEntry();
+			$log_entry->post_id     = $row->ID;
+			$log_entry->author_id   = $row->post_author;
+			$log_entry->created     = get_post_datetime( $row->ID, 'date', 'local' );
+			$log_entry->modified    = get_post_datetime( $row->ID, 'modified', 'local' );
+			$log_entry->status      = $row->post_status;
+			$log_entry->course_id   = $row->course_id;
+			$log_entry->order_id    = $row->order_id;
+			$log_entry->attendee_id = $row->attendee_id;
+			$log_entry->comment     = $row->comment;
+			array_push( $log_entries, $log_entry );
+		}
+
+		return $log_entries;
+	}
+
 	public static function find_entry( LogQuery $query ): LogEntry {
 
 		global $wpdb;
