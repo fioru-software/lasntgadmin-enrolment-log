@@ -1,6 +1,6 @@
 {
     "name": "fioru/lasntgadmin-enrolment-log",
-    "version": "1.0.0-rc9",
+    "version": "1.0.0-rc10",
     "type": "wordpress-plugin",
     "extra": {
         "installer-name": "lasntgadmin-enrolment-log"

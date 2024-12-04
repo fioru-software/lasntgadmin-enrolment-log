@@ -39,7 +39,7 @@ class DbApi {
 			)
 		);
 
-		$prepared = "SELECT * FROM $table_name JOIN wp_posts ON $table_name.post_id = wp_posts.ID WHERE wp_posts.post_status IN ($statuses)"; // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$prepared = "SELECT * FROM $table_name JOIN $wpdb->posts ON $table_name.post_id = wp_posts.ID WHERE wp_posts.post_status IN ($statuses)"; // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		if ( isset( $query->course_id ) ) {
 			$prepared = $wpdb->prepare(
@@ -61,6 +61,8 @@ class DbApi {
 				intval( $query->order_id )
 			);
 		}
+
+		$prepared .= " ORDER BY $wpdb->posts.post_modified DESC"; // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		$rows = $wpdb->get_results( $prepared ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
