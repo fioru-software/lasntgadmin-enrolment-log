@@ -3,7 +3,7 @@
  * Plugin Name:       LASNTG Enrolment Log
  * Plugin URI:        https://github.com/fioru-software/lasntgadmin-enrolment-log
  * Description:       Log of enrolments and cancellations.
- * Version:           1.0.0-rc10
+ * Version:           1.0.0
  * Requires PHP:      7.2
  * Text Domain:       lasntgadmin
  * Domain Path:       /languages
