@@ -26,47 +26,47 @@
     "repositories": [
         {
             "type": "vcs",
-            "url":  "git@github.com:fioru-software/lasntgadmin-grant-funded-payment-gateway.git"
+            "url":  "git@github.com:boatyardx/lasntgadmin-grant-funded-payment-gateway.git"
         },
         {
             "type": "vcs",
-            "url":  "git@github.com:fioru-software/lasntgadmin-purchase-order-payment-gateway.git"
+            "url":  "git@github.com:boatyardx/lasntgadmin-purchase-order-payment-gateway.git"
         },
         {
             "type": "vcs",
-            "url":  "git@github.com:fioru-software/lasntgadmin-dashboard.git"
+            "url":  "git@github.com:boatyardx/lasntgadmin-dashboard.git"
         },
         {
             "type": "vcs",
-            "url":  "git@github.com:fioru-software/lasntgadmin-theme.git"
+            "url":  "git@github.com:boatyardx/lasntgadmin-theme.git"
         },
         {
             "type": "vcs",
-            "url":  "git@github.com:fioru-software/lasntgadmin-translate.git"
+            "url":  "git@github.com:boatyardx/lasntgadmin-translate.git"
         },
         {
             "type": "vcs",
-            "url":  "git@github.com:fioru-software/lasntgadmin-subscriptions.git"
+            "url":  "git@github.com:boatyardx/lasntgadmin-subscriptions.git"
         },
         {
             "type": "vcs",
-            "url":  "git@github.com:fioru-software/lasntgadmin-groups.git"
+            "url":  "git@github.com:boatyardx/lasntgadmin-groups.git"
         },
         {
             "type": "vcs",
-            "url":  "git@github.com:fioru-software/lasntgadmin-attendees.git"
+            "url":  "git@github.com:boatyardx/lasntgadmin-attendees.git"
         },
         {
             "type": "vcs",
-            "url":  "git@github.com:fioru-software/lasntgadmin-products.git"
+            "url":  "git@github.com:boatyardx/lasntgadmin-products.git"
         },
         {
             "type": "vcs",
-            "url":  "git@github.com:fioru-software/lasntgadmin-users.git"
+            "url":  "git@github.com:boatyardx/lasntgadmin-users.git"
         },
         {
             "type": "vcs",
-            "url":  "git@github.com:fioru-software/lasntgadmin-orders.git"
+            "url":  "git@github.com:boatyardx/lasntgadmin-orders.git"
         }
     ],
     "require": {

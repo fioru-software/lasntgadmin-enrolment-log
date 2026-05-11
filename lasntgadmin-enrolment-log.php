@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name:       LASNTG Enrolment Log
- * Plugin URI:        https://github.com/fioru-software/lasntgadmin-enrolment-log
+ * Plugin URI:        https://github.com/boatyardx/lasntgadmin-enrolment-log
  * Description:       Log of enrolments and cancellations.
  * Version:           1.0.0
  * Requires PHP:      7.2

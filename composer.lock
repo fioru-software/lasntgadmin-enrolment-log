@@ -158,12 +158,12 @@
             "version": "3.8.23-rc2",
             "source": {
                 "type": "git",
-                "url": "git@github.com:fioru-software/lasntgadmin-attendees.git",
+                "url": "git@github.com:boatyardx/lasntgadmin-attendees.git",
                 "reference": "c0eaa6058b9e3322d3e20c22f057bebea93fc3ca"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fioru-software/lasntgadmin-attendees/zipball/c0eaa6058b9e3322d3e20c22f057bebea93fc3ca",
+                "url": "https://api.github.com/repos/boatyardx/lasntgadmin-attendees/zipball/c0eaa6058b9e3322d3e20c22f057bebea93fc3ca",
                 "reference": "c0eaa6058b9e3322d3e20c22f057bebea93fc3ca",
                 "shasum": ""
             },
@@ -224,7 +224,7 @@
                 ]
             },
             "support": {
-                "source": "https://github.com/fioru-software/lasntgadmin-attendees/tree/3.8.23-rc2"
+                "source": "https://github.com/boatyardx/lasntgadmin-attendees/tree/3.8.23-rc2"
             },
             "time": "2024-10-11T13:16:02+00:00"
         },
@@ -233,12 +233,12 @@
             "version": "1.1.9-rc1",
             "source": {
                 "type": "git",
-                "url": "git@github.com:fioru-software/lasntgadmin-dashboard.git",
+                "url": "git@github.com:boatyardx/lasntgadmin-dashboard.git",
                 "reference": "ceabc7be900d9dd9e8ce797bd332b639bbded637"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fioru-software/lasntgadmin-dashboard/zipball/ceabc7be900d9dd9e8ce797bd332b639bbded637",
+                "url": "https://api.github.com/repos/boatyardx/lasntgadmin-dashboard/zipball/ceabc7be900d9dd9e8ce797bd332b639bbded637",
                 "reference": "ceabc7be900d9dd9e8ce797bd332b639bbded637",
                 "shasum": ""
             },
@@ -302,7 +302,7 @@
                 ]
             },
             "support": {
-                "source": "https://github.com/fioru-software/lasntgadmin-dashboard/tree/1.1.9-rc1"
+                "source": "https://github.com/boatyardx/lasntgadmin-dashboard/tree/1.1.9-rc1"
             },
             "time": "2024-10-07T10:12:31+00:00"
         },
@@ -311,12 +311,12 @@
             "version": "1.10.8",
             "source": {
                 "type": "git",
-                "url": "git@github.com:fioru-software/lasntgadmin-grant-funded-payment-gateway.git",
+                "url": "git@github.com:boatyardx/lasntgadmin-grant-funded-payment-gateway.git",
                 "reference": "67d83cea4105369ea6e83a2f638e5e78fa9d721e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fioru-software/lasntgadmin-grant-funded-payment-gateway/zipball/67d83cea4105369ea6e83a2f638e5e78fa9d721e",
+                "url": "https://api.github.com/repos/boatyardx/lasntgadmin-grant-funded-payment-gateway/zipball/67d83cea4105369ea6e83a2f638e5e78fa9d721e",
                 "reference": "67d83cea4105369ea6e83a2f638e5e78fa9d721e",
                 "shasum": ""
             },
@@ -378,7 +378,7 @@
                 ]
             },
             "support": {
-                "source": "https://github.com/fioru-software/lasntgadmin-grant-funded-payment-gateway/tree/1.10.8"
+                "source": "https://github.com/boatyardx/lasntgadmin-grant-funded-payment-gateway/tree/1.10.8"
             },
             "time": "2024-09-02T15:22:00+00:00"
         },
@@ -387,12 +387,12 @@
             "version": "1.6.2",
             "source": {
                 "type": "git",
-                "url": "git@github.com:fioru-software/lasntgadmin-groups.git",
+                "url": "git@github.com:boatyardx/lasntgadmin-groups.git",
                 "reference": "8621e332cbf352abff3318dbc8f9169db63137ee"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fioru-software/lasntgadmin-groups/zipball/8621e332cbf352abff3318dbc8f9169db63137ee",
+                "url": "https://api.github.com/repos/boatyardx/lasntgadmin-groups/zipball/8621e332cbf352abff3318dbc8f9169db63137ee",
                 "reference": "8621e332cbf352abff3318dbc8f9169db63137ee",
                 "shasum": ""
             },
@@ -449,7 +449,7 @@
                 ]
             },
             "support": {
-                "source": "https://github.com/fioru-software/lasntgadmin-groups/tree/1.6.2"
+                "source": "https://github.com/boatyardx/lasntgadmin-groups/tree/1.6.2"
             },
             "time": "2024-08-06T10:28:55+00:00"
         },
@@ -458,12 +458,12 @@
             "version": "1.9.0",
             "source": {
                 "type": "git",
-                "url": "git@github.com:fioru-software/lasntgadmin-orders.git",
+                "url": "git@github.com:boatyardx/lasntgadmin-orders.git",
                 "reference": "2055fdc4847946bb1205de95ef8d975ae467fc44"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fioru-software/lasntgadmin-orders/zipball/2055fdc4847946bb1205de95ef8d975ae467fc44",
+                "url": "https://api.github.com/repos/boatyardx/lasntgadmin-orders/zipball/2055fdc4847946bb1205de95ef8d975ae467fc44",
                 "reference": "2055fdc4847946bb1205de95ef8d975ae467fc44",
                 "shasum": ""
             },
@@ -529,7 +529,7 @@
                 ]
             },
             "support": {
-                "source": "https://github.com/fioru-software/lasntgadmin-orders/tree/1.9.0"
+                "source": "https://github.com/boatyardx/lasntgadmin-orders/tree/1.9.0"
             },
             "time": "2024-10-11T08:54:42+00:00"
         },
@@ -538,12 +538,12 @@
             "version": "5.14.20",
             "source": {
                 "type": "git",
-                "url": "git@github.com:fioru-software/lasntgadmin-products.git",
+                "url": "git@github.com:boatyardx/lasntgadmin-products.git",
                 "reference": "37fb42394696cbfe345b2343d44a9919580a507c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fioru-software/lasntgadmin-products/zipball/37fb42394696cbfe345b2343d44a9919580a507c",
+                "url": "https://api.github.com/repos/boatyardx/lasntgadmin-products/zipball/37fb42394696cbfe345b2343d44a9919580a507c",
                 "reference": "37fb42394696cbfe345b2343d44a9919580a507c",
                 "shasum": ""
             },
@@ -605,7 +605,7 @@
                 ]
             },
             "support": {
-                "source": "https://github.com/fioru-software/lasntgadmin-products/tree/5.14.20"
+                "source": "https://github.com/boatyardx/lasntgadmin-products/tree/5.14.20"
             },
             "time": "2024-10-10T12:20:23+00:00"
         },
@@ -614,12 +614,12 @@
             "version": "1.2.16",
             "source": {
                 "type": "git",
-                "url": "git@github.com:fioru-software/lasntgadmin-purchase-order-payment-gateway.git",
+                "url": "git@github.com:boatyardx/lasntgadmin-purchase-order-payment-gateway.git",
                 "reference": "cc2d510f7e567cafd5a887d66c0c0c5c176f0e53"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fioru-software/lasntgadmin-purchase-order-payment-gateway/zipball/cc2d510f7e567cafd5a887d66c0c0c5c176f0e53",
+                "url": "https://api.github.com/repos/boatyardx/lasntgadmin-purchase-order-payment-gateway/zipball/cc2d510f7e567cafd5a887d66c0c0c5c176f0e53",
                 "reference": "cc2d510f7e567cafd5a887d66c0c0c5c176f0e53",
                 "shasum": ""
             },
@@ -676,8 +676,8 @@
                 ]
             },
             "support": {
-                "source": "https://github.com/fioru-software/lasntgadmin-purchase-order-payment-gateway/tree/1.2.16",
-                "issues": "https://github.com/fioru-software/lasntgadmin-purchase-order-payment-gateway/issues"
+                "source": "https://github.com/boatyardx/lasntgadmin-purchase-order-payment-gateway/tree/1.2.16",
+                "issues": "https://github.com/boatyardx/lasntgadmin-purchase-order-payment-gateway/issues"
             },
             "time": "2024-10-11T08:56:57+00:00"
         },
@@ -686,12 +686,12 @@
             "version": "2.1.27",
             "source": {
                 "type": "git",
-                "url": "git@github.com:fioru-software/lasntgadmin-subscriptions.git",
+                "url": "git@github.com:boatyardx/lasntgadmin-subscriptions.git",
                 "reference": "d41c2d5e4f7f05899eeca305e682258e44b45fc7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fioru-software/lasntgadmin-subscriptions/zipball/d41c2d5e4f7f05899eeca305e682258e44b45fc7",
+                "url": "https://api.github.com/repos/boatyardx/lasntgadmin-subscriptions/zipball/d41c2d5e4f7f05899eeca305e682258e44b45fc7",
                 "reference": "d41c2d5e4f7f05899eeca305e682258e44b45fc7",
                 "shasum": ""
             },
@@ -754,7 +754,7 @@
                 ]
             },
             "support": {
-                "source": "https://github.com/fioru-software/lasntgadmin-subscriptions/tree/2.1.27"
+                "source": "https://github.com/boatyardx/lasntgadmin-subscriptions/tree/2.1.27"
             },
             "time": "2024-10-03T08:40:45+00:00"
         },
@@ -763,12 +763,12 @@
             "version": "1.0.9-rc1",
             "source": {
                 "type": "git",
-                "url": "git@github.com:fioru-software/lasntgadmin-theme.git",
+                "url": "git@github.com:boatyardx/lasntgadmin-theme.git",
                 "reference": "b0ce8923e41aec3328e8dfa3553fb1339e0e2765"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fioru-software/lasntgadmin-theme/zipball/b0ce8923e41aec3328e8dfa3553fb1339e0e2765",
+                "url": "https://api.github.com/repos/boatyardx/lasntgadmin-theme/zipball/b0ce8923e41aec3328e8dfa3553fb1339e0e2765",
                 "reference": "b0ce8923e41aec3328e8dfa3553fb1339e0e2765",
                 "shasum": ""
             },
@@ -832,8 +832,8 @@
                 ]
             },
             "support": {
-                "source": "https://github.com/fioru-software/lasntgadmin-theme/tree/1.0.9-rc1",
-                "issues": "https://github.com/fioru-software/lasntgadmin-theme/issues"
+                "source": "https://github.com/boatyardx/lasntgadmin-theme/tree/1.0.9-rc1",
+                "issues": "https://github.com/boatyardx/lasntgadmin-theme/issues"
             },
             "time": "2024-08-14T08:36:11+00:00"
         },
@@ -842,12 +842,12 @@
             "version": "1.2.12",
             "source": {
                 "type": "git",
-                "url": "git@github.com:fioru-software/lasntgadmin-translate.git",
+                "url": "git@github.com:boatyardx/lasntgadmin-translate.git",
                 "reference": "842e03563965eddc11c0716ccf0bc0dbec276558"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fioru-software/lasntgadmin-translate/zipball/842e03563965eddc11c0716ccf0bc0dbec276558",
+                "url": "https://api.github.com/repos/boatyardx/lasntgadmin-translate/zipball/842e03563965eddc11c0716ccf0bc0dbec276558",
                 "reference": "842e03563965eddc11c0716ccf0bc0dbec276558",
                 "shasum": ""
             },
@@ -912,7 +912,7 @@
                 ]
             },
             "support": {
-                "source": "https://github.com/fioru-software/lasntgadmin-translate/tree/1.2.12"
+                "source": "https://github.com/boatyardx/lasntgadmin-translate/tree/1.2.12"
             },
             "time": "2024-07-24T06:49:59+00:00"
         },
@@ -921,12 +921,12 @@
             "version": "3.4.1",
             "source": {
                 "type": "git",
-                "url": "git@github.com:fioru-software/lasntgadmin-users.git",
+                "url": "git@github.com:boatyardx/lasntgadmin-users.git",
                 "reference": "1760185945bc235ca15bedb8d46b80f482bf615e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fioru-software/lasntgadmin-users/zipball/1760185945bc235ca15bedb8d46b80f482bf615e",
+                "url": "https://api.github.com/repos/boatyardx/lasntgadmin-users/zipball/1760185945bc235ca15bedb8d46b80f482bf615e",
                 "reference": "1760185945bc235ca15bedb8d46b80f482bf615e",
                 "shasum": ""
             },
@@ -987,7 +987,7 @@
                 ]
             },
             "support": {
-                "source": "https://github.com/fioru-software/lasntgadmin-users/tree/3.4.1"
+                "source": "https://github.com/boatyardx/lasntgadmin-users/tree/3.4.1"
             },
             "time": "2024-08-22T09:14:50+00:00"
         },

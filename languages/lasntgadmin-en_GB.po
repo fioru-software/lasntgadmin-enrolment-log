@@ -20,7 +20,7 @@ msgid "LASNTG Enrolment Log"
 msgstr ""
 
 #. Plugin URI of the plugin
-msgid "https://github.com/fioru-software/lasntgadmin-enrolment-log"
+msgid "https://github.com/boatyardx/lasntgadmin-enrolment-log"
 msgstr ""
 
 #. Description of the plugin
